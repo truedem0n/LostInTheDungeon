@@ -1,5 +1,7 @@
 
-visualstudio/
+visualstudio/Debug/
+visualstudio/Release/
+visualstudio/.vs/
 *.ilk
 *.pdb
 bin/SFMLGame.iobj
