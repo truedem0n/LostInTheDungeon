@@ -1075,7 +1075,7 @@ void GameState_Play::sRender()
 					shader.setUniform("currentTexture", sf::Shader::CurrentTexture);
 					m_game.window().draw(animation.getSprite(), &shader);
 				}
-				else if (animation.getEntityName() == "Link")
+				else if (animation.getEntityName() == "Rock")
 				{
 					shader1.setUniform("currentTexture", sf::Shader::CurrentTexture);
 					m_game.window().draw(animation.getSprite(), &shader1);
