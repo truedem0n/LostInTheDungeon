@@ -38,6 +38,7 @@ protected:
 	bool					m_typing = false;
 	bool					m_hasMenu = false;
 	bool					m_addEntity = false;
+	bool					m_jumpMovement = true;
 	sf::Clock               m_clock;
 	int navmesh[60][36];
 	void init(const std::string& levelPath);
@@ -56,6 +57,8 @@ protected:
 	void inializeNavMesh();
 	Vec2 resolveNavigation(int xPos, int yPos, float speed);
 
+	void smoothMovement();
+	void jumpMovement();
 	void sMovement();
 	void sAI();
 	void sLifespan();

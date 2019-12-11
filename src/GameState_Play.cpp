@@ -207,7 +207,6 @@ void GameState_Play::sDrag()
 	}
 }
 
-
 void GameState_Play::sDrawFileName(int x)
 {
 	if (x == 8)
@@ -275,6 +274,7 @@ void GameState_Play::spawnPlayer()
 	m_player = m_entityManager.addEntity("player");
 	m_player->addComponent<CTransform>(Vec2(m_playerConfig.X, m_playerConfig.Y));
 	m_player->getComponent<CTransform>().prevPos = m_player->getComponent<CTransform>().pos;
+	m_player->getComponent<CTransform>().targPos = m_player->getComponent<CTransform>().pos;
 	m_player->addComponent<CAnimation>(m_game.getAssets().getAnimation("StandDown"), true);
 	// Cbounding box constructor needs bound size, blocksmovement, blocksvision
 	m_player->addComponent<CBoundingBox>(Vec2(m_playerConfig.CX, m_playerConfig.CY), true, true);
@@ -342,71 +342,6 @@ void GameState_Play::update()
 
 void GameState_Play::sMovement()
 {
-	//TODO: remove this before submission (helpful for debugging)
-	//std::cout << m_player->getComponent<CTransform>().pos.x << "," << m_player->getComponent<CTransform>().pos.y << "\n";
-	// Implement player velocity from input
-	m_player->getComponent<CTransform>().speed.y = 0;
-	m_player->getComponent<CTransform>().speed.x = 0;
-	if (m_player->getComponent<CInput>().up)
-	{
-		m_player->getComponent<CTransform>().speed.y -= m_playerConfig.SPEED;
-	}
-	if (m_player->getComponent<CInput>().down)
-	{
-		m_player->getComponent<CTransform>().speed.y = m_playerConfig.SPEED;
-	}
-	if (m_player->getComponent<CInput>().right)
-	{
-		m_player->getComponent<CTransform>().speed.x = m_playerConfig.SPEED;
-	}
-	if (m_player->getComponent<CInput>().left)
-	{
-		m_player->getComponent<CTransform>().speed.x = -m_playerConfig.SPEED;
-	}
-
-	//if x and y speeds are given, move in the same direction as the previous frame
-	if (m_player->getComponent<CTransform>().speed.y != 0 && m_player->getComponent<CTransform>().speed.x != 0)
-	{
-		if (m_player->getComponent<CTransform>().prevPos.x - m_player->getComponent<CTransform>().pos.x == 0)
-		{
-			m_player->getComponent<CTransform>().speed.x = 0;
-		}
-		else
-		{
-			m_player->getComponent<CTransform>().speed.y = 0;
-		}
-	}
-
-	//Update the facing to reflect their movement
-	if (m_player->getComponent<CTransform>().speed.y > 0)
-	{
-		m_player->getComponent<CTransform>().facing = Vec2(0, 1);
-	}
-	else if (m_player->getComponent<CTransform>().speed.y < 0)
-	{
-		m_player->getComponent<CTransform>().facing = Vec2(0, -1);
-	}
-	else if (m_player->getComponent<CTransform>().speed.x > 0)
-	{
-		m_player->getComponent<CTransform>().facing = Vec2(1, 0);
-	}
-	else if (m_player->getComponent<CTransform>().speed.x < 0)
-	{
-		m_player->getComponent<CTransform>().facing = Vec2(-1, 0);
-	}
-
-	//update character pos
-	m_player->getComponent<CTransform>().prevPos = m_player->getComponent<CTransform>().pos;
-	m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().speed;
-
-	// check if the player moved tiles
-	if (m_playerConfig.NPChasPathFinding && (floor(m_player->getComponent<CTransform>().pos.x / 64) - floor(m_player->getComponent<CTransform>().prevPos.x / 64) != 0 ||
-		floor(m_player->getComponent<CTransform>().pos.y / 64) - floor(m_player->getComponent<CTransform>().prevPos.y / 64) != 0))
-	{
-		// initialize navigation mesh
-		inializeNavMesh();
-	}
-
 	// Can spawnSword?
 	if (m_player->getComponent<CInput>().shoot)
 	{
@@ -431,6 +366,80 @@ void GameState_Play::sMovement()
 			t->getComponent<CTransform>().prevPos = t->getComponent<CTransform>().pos;
 			t->getComponent<CTransform>().pos += t->getComponent<CTransform>().speed;
 		}
+	}
+
+	// if using the jump movement, don't accept input until the player is done jumping
+	if (m_player->getComponent<CTransform>().jump && (abs(m_player->getComponent<CTransform>().pos.x - m_player->getComponent<CTransform>().targPos.x) > m_playerConfig.SPEED
+		|| abs(m_player->getComponent<CTransform>().pos.y - m_player->getComponent<CTransform>().targPos.y) > m_playerConfig.SPEED))
+	{
+		//update character pos
+		m_player->getComponent<CTransform>().prevPos = m_player->getComponent<CTransform>().pos;
+		m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().speed;
+		return;
+	}
+
+	// reset the player's speed
+	m_player->getComponent<CTransform>().speed.y = 0;
+	m_player->getComponent<CTransform>().speed.x = 0;
+
+	// get player speed from input
+	if (m_player->getComponent<CInput>().up)
+	{
+		m_player->getComponent<CTransform>().speed.y -= m_playerConfig.SPEED;
+	}
+	if (m_player->getComponent<CInput>().down)
+	{
+		m_player->getComponent<CTransform>().speed.y = m_playerConfig.SPEED;
+	}
+	if (m_player->getComponent<CInput>().right)
+	{
+		m_player->getComponent<CTransform>().speed.x = m_playerConfig.SPEED;
+	}
+	if (m_player->getComponent<CInput>().left)
+	{
+		m_player->getComponent<CTransform>().speed.x = -m_playerConfig.SPEED;
+	}
+
+	//if x and y speeds are given, do not move the player
+	if (m_player->getComponent<CTransform>().speed.y != 0 && m_player->getComponent<CTransform>().speed.x != 0 && !m_player->getComponent<CTransform>().jump)
+	{
+		m_player->getComponent<CTransform>().speed.x = 0;
+		m_player->getComponent<CTransform>().speed.y = 0;
+	}
+
+	//Update the facing to reflect their movement
+	if (m_player->getComponent<CTransform>().speed.y > 0)
+	{
+		m_player->getComponent<CTransform>().facing = Vec2(0, 1);
+	}
+	else if (m_player->getComponent<CTransform>().speed.y < 0)
+	{
+		m_player->getComponent<CTransform>().facing = Vec2(0, -1);
+	}
+	else if (m_player->getComponent<CTransform>().speed.x > 0)
+	{
+		m_player->getComponent<CTransform>().facing = Vec2(1, 0);
+	}
+	else if (m_player->getComponent<CTransform>().speed.x < 0)
+	{
+		m_player->getComponent<CTransform>().facing = Vec2(-1, 0);
+	}
+
+	//update character pos
+	m_player->getComponent<CTransform>().prevPos = m_player->getComponent<CTransform>().pos;
+	m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().speed;
+	if (m_player->getComponent<CTransform>().jump)
+	{
+		m_player->getComponent<CTransform>().targPos.x += (m_player->getComponent<CTransform>().speed.x / m_playerConfig.SPEED) * 128;
+		m_player->getComponent<CTransform>().targPos.y += (m_player->getComponent<CTransform>().speed.y / m_playerConfig.SPEED) * 128;
+	}
+
+	// check if the player moved tiles
+	if (m_playerConfig.NPChasPathFinding && (floor(m_player->getComponent<CTransform>().pos.x / 64) - floor(m_player->getComponent<CTransform>().prevPos.x / 64) != 0 ||
+		floor(m_player->getComponent<CTransform>().pos.y / 64) - floor(m_player->getComponent<CTransform>().prevPos.y / 64) != 0))
+	{
+		// initialize navigation mesh
+		inializeNavMesh();
 	}
 }
 

@@ -16,10 +16,12 @@ class CTransform : public Component
 public:
     Vec2 pos        = { 0.0, 0.0 };
     Vec2 prevPos    = { 0.0, 0.0 };
+	Vec2 targPos	= { 0.0, 0.0 };
     Vec2 scale      = { 1.0, 1.0 };
     Vec2 speed      = { 0.0, 0.0 };
     Vec2 facing     = { 1.0, 0.0 };
-    float angle = 0;
+    float angle		= 0;
+	bool jump		= true;
 
     CTransform(const Vec2 & p = { 0, 0 })
         : pos(p), angle(0) {}
