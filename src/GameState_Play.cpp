@@ -353,15 +353,15 @@ void GameState_Play::sMovement()
 	}
 	if (m_player->getComponent<CInput>().down)
 	{
-		m_player->getComponent<CTransform>().speed.y = m_playerConfig.SPEED;
+		m_player->getComponent<CTransform>().speed.y += m_playerConfig.SPEED;
 	}
 	if (m_player->getComponent<CInput>().right)
 	{
-		m_player->getComponent<CTransform>().speed.x = m_playerConfig.SPEED;
+		m_player->getComponent<CTransform>().speed.x += m_playerConfig.SPEED;
 	}
 	if (m_player->getComponent<CInput>().left)
 	{
-		m_player->getComponent<CTransform>().speed.x = -m_playerConfig.SPEED;
+		m_player->getComponent<CTransform>().speed.x -= m_playerConfig.SPEED;
 	}
 
 	//if x and y speeds are given, move in the same direction as the previous frame
