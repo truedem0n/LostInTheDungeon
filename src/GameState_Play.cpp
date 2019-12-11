@@ -655,11 +655,21 @@ void GameState_Play::sEntityCollision(std::shared_ptr<Entity> entity, std::share
 				if (entity->getComponent<CTransform>().pos.x < tile->getComponent<CTransform>().pos.x)
 				{
 					entity->getComponent<CTransform>().pos.x -= currOverlap.x;
+					if (entity->tag() == "player" && entity->getComponent<CTransform>().jump)
+					{
+						entity->getComponent<CTransform>().targPos.x -= 128;
+						entity->getComponent<CTransform>().speed.x = -m_playerConfig.SPEED;
+					}
 				}
 				//right side collision
 				else if (entity->getComponent<CTransform>().pos.x > tile->getComponent<CTransform>().pos.x)
 				{
 					entity->getComponent<CTransform>().pos.x += currOverlap.x;
+					if (entity->tag() == "player" && entity->getComponent<CTransform>().jump)
+					{
+						entity->getComponent<CTransform>().targPos.x += 128;
+						entity->getComponent<CTransform>().speed.x = m_playerConfig.SPEED;
+					}
 				}
 			}
 		}
@@ -671,11 +681,21 @@ void GameState_Play::sEntityCollision(std::shared_ptr<Entity> entity, std::share
 				if (entity->getComponent<CTransform>().pos.y < tile->getComponent<CTransform>().pos.y)
 				{
 					entity->getComponent<CTransform>().pos.y -= currOverlap.y;
+					if (entity->tag() == "player" && entity->getComponent<CTransform>().jump)
+					{
+						entity->getComponent<CTransform>().targPos.y -= 128;
+						entity->getComponent<CTransform>().speed.y = -m_playerConfig.SPEED;
+					}
 				}
 				//bottom collision
 				else if (entity->getComponent<CTransform>().pos.y > tile->getComponent<CTransform>().pos.y)
 				{
 					entity->getComponent<CTransform>().pos.y += currOverlap.y;
+					if (entity->tag() == "player" && entity->getComponent<CTransform>().jump)
+					{
+						entity->getComponent<CTransform>().targPos.y += 128;
+						entity->getComponent<CTransform>().speed.y = m_playerConfig.SPEED;
+					}
 				}
 			}
 
