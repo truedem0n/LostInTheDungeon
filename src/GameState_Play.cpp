@@ -519,6 +519,34 @@ void GameState_Play::sAI()
 				float angle = atan2(currentPos.y - t->getComponent<CTransform>().pos.y, currentPos.x - t->getComponent<CTransform>().pos.x);
 				t->getComponent<CTransform>().speed.x = cos(angle) * t->getComponent<CPatrol>().speed;
 				t->getComponent<CTransform>().speed.y = sin(angle) * t->getComponent<CPatrol>().speed;
+
+				//update the npc's facing
+				if (t->getComponent<CTransform>().speed.x > 0.1)
+				{
+					t->getComponent<CTransform>().facing.x = 1;
+				}
+				else if (t->getComponent<CTransform>().speed.x < -0.1)
+				{
+					t->getComponent<CTransform>().facing.x = -1;
+				}
+				else
+				{
+					t->getComponent<CTransform>().facing.x = 0;
+				}
+
+				//update the npc's facing
+				if (t->getComponent<CTransform>().speed.y > 0.1)
+				{
+					t->getComponent<CTransform>().facing.y = 1;
+				}
+				else if (t->getComponent<CTransform>().speed.y < -0.1)
+				{
+					t->getComponent<CTransform>().facing.y = -1;
+				}
+				else
+				{
+					t->getComponent<CTransform>().facing.y = 0;
+				}
 			}
 		}
 
@@ -937,8 +965,6 @@ void GameState_Play::sAnimation()
 {
 	// A string that builds the animation name
 	std::string playerAnimation = "";
-	std::string swordAnimation = "Sword";
-	auto& swords = m_entityManager.getEntities("sword");
 
 	//Set the action part of the animation
 	if (m_player->getComponent<CTransform>().speed.x != 0 || m_player->getComponent<CTransform>().speed.y != 0)
@@ -954,53 +980,57 @@ void GameState_Play::sAnimation()
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, 1))
 	{
 		playerAnimation += "Down";
-
-		swordAnimation += "Up";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.y = -1;
-		}
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, -1))
 	{
 		playerAnimation += "Up";
-
-		swordAnimation += "Up";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.y = 1;
-		}
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(1, 0))
 	{
 		playerAnimation += "Right";
 		m_player->getComponent<CTransform>().scale.x = 1;
-
-		swordAnimation += "Right";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.x = 1;
-		}
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(-1, 0))
 	{
 		playerAnimation += "Right";
 		m_player->getComponent<CTransform>().scale.x = -1;
-
-		swordAnimation += "Right";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.x = -1;
-		}
 	}
 
 	//Update the animation of the player if it changed
 	if (m_player->getComponent<CAnimation>().animation.getName() != playerAnimation)
 	{
 		m_player->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation(playerAnimation);
-		for (auto sword : swords)
+	}
+
+	//update the enemies animations
+	for (auto& i : m_entityManager.getEntities("npc"))
+	{
+		// A string that builds the animation name
+		std::string enemyAnimation = "";
+		if (i->getComponent<CAnimation>().animation.getEntityName() == "Enemy2")
 		{
-			sword->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation(swordAnimation);
+			enemyAnimation += "En2";
+		}
+		if (i->getComponent<CTransform>().facing.x == 0)
+		{
+			enemyAnimation += "Jump";
+		}
+		else
+		{
+			enemyAnimation += "Walk";
+			if (i->getComponent<CTransform>().facing.x < 0)
+			{
+				i->getComponent<CTransform>().scale.x = -1;
+			}
+			else
+			{
+				i->getComponent<CTransform>().scale.x = 1;
+			}
+		}
+		//Update the animation of the enemy if it changed
+		if (i->getComponent<CAnimation>().animation.getName() != enemyAnimation)
+		{
+			i->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation(enemyAnimation);
 		}
 	}
 

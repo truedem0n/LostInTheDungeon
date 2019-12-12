@@ -34,14 +34,14 @@ Texture   TexFloor      images/liad/tiles/floor.png
 Texture   TexSpikesD    images/liad/tiles/spikes_up.png
 Texture   TexTektite    images/tloz/tektite.png
 Texture   TexKnight     images/tloz/knight.png
-Texture   TexEn1Die     images/liad/enemy_1/enemy_dead.png
-Texture   TexEn1Jump    images/liad/enemy_1/enemy_jump.png
-Texture   TexEn1StandD  images/liad/enemy_1/stand_down.png
-Texture   TexEn1StandR  images/liad/enemy_1/stand_right.png
-Texture   TexEn2Die     images/liad/enemy_2/enemy_dead.png
-Texture   TexEn2Jump    images/liad/enemy_2/enemy_jump.png
-Texture   TexEn2StandD  images/liad/enemy_2/stand_down.png
-Texture   TexEn2StandR  images/liad/enemy_2/stand_right.png
+Texture   TexEn1Die     images/liad/enemy_1/death.png
+Texture   TexEn1Jump    images/liad/enemy_1/jump.png
+Texture   TexEn1Stand   images/liad/enemy_1/stand.png
+Texture   TexEn1Walk    images/liad/enemy_1/walking.png
+Texture   TexEn2Die     images/liad/enemy_2/death.png
+Texture   TexEn2Jump    images/liad/enemy_2/jump.png
+Texture   TexEn2Stand   images/liad/enemy_2/stand.png
+Texture   TexEn2Walk    images/liad/enemy_2/walking.png
 Texture   TexBossDie    images/liad/boss/boss_dead.png
 Texture   TexBossJump   images/liad/boss/boss_jump.png
 Texture   TexBossStandD images/liad/boss/stand_down.png
@@ -55,6 +55,14 @@ Animation StandRight    TexStandR       1    0 Hero 0
 Animation StandUp       TexStandU       1    0 Hero 0
 Animation Tektite       TexTektite      2   10 Tektite 1
 Animation Knight        TexKnight       2   10 Knight 1
+Animation En1Die        TexEn1Die       3   10 Enemy1 0
+Animation En1Jump       TexEn1Jump      3   10 Enemy1 0
+Animation En1Stand      TexEn1Stand     1   10 Enemy1 1
+Animation En1Walk       TexEn1Walk      3   10 Enemy1 0
+Animation En2Die        TexEn2Die       3   10 Enemy2 0
+Animation En2Jump       TexEn2Jump      3   10 Enemy2 0
+Animation En2Stand      TexEn2Stand     1   10 Enemy2 1
+Animation En2Walk       TexEn2Walk      3   10 Enemy2 0
 Animation AtkUp         TexAtkUp        1    0 Link 0
 Animation AtkDown       TexAtkDown      1    0 Link 0
 Animation AtkRight      TexAtkRight     1    0 Link 0
