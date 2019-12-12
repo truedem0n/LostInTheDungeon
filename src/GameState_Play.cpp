@@ -64,7 +64,7 @@ void GameState_Play::loadLevel(const std::string& filename)
 				//	Tile Position     TX TY     int, int
 				//	Blocks Movement   BM        int(1 = true, 0 = false)
 				//	Blocks Vision     BV        int(1 = true, 0 = false)
-				int x = 64, y = 64, RX, RY, TX, TY;
+				int  x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
 				bool BM, BV;
 				auto block = m_entityManager.addEntity("tile");
 				infile >> m_token;
@@ -114,7 +114,7 @@ void GameState_Play::loadLevel(const std::string& filename)
 				//	- This NPC does not block movement or vision
 				//	- The NPC has a Patrol AI with speed 2 and 4 positions, each in room(0, 0)
 				//	Positions : (15, 10) (15, 7) (17, 7) (17, 10)
-				int x = 64, y = 64, RX, RY, TX, TY;
+				int x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
 				bool BM, BV;
 				std::string followBehaviour;
 				auto npc = m_entityManager.addEntity("npc");
@@ -124,7 +124,7 @@ void GameState_Play::loadLevel(const std::string& filename)
 					getAnimation(m_token), true);
 				// room coordinates, tile coordinates, block movement,vision, and behaviour.
 				infile >> RX >> RY >> TX >> TY >> BM >> BV >> followBehaviour;
-				npc->addComponent<CBoundingBox>(Vec2(64, 64), BM, BV);
+				npc->addComponent<CBoundingBox>(Vec2(96, 96), BM, BV);
 				npc->addComponent<CTransform>(Vec2(x * TX + RX * float(m_game.window().getSize().x) + x / 2, y * TY + RY * float(m_game.window().getSize().y) + y / 2));
 				npc->getComponent<CTransform>().prevPos = npc->getComponent<CTransform>().pos;
 				if (followBehaviour == "Follow")
@@ -193,8 +193,8 @@ void GameState_Play::sDrag()
 			{
 				if (m_snapToGrid)
 				{
-					t->getComponent<CTransform>().pos.x = m_roomView.getCenter().x - m_game.window().getSize().x / 2 + 32 + (int(sf::Mouse::getPosition(m_game.window()).x) / 64) * 64;
-					t->getComponent<CTransform>().pos.y = m_roomView.getCenter().y - m_game.window().getSize().y / 2 + 32 + (int(sf::Mouse::getPosition(m_game.window()).y) / 64) * 64;
+					t->getComponent<CTransform>().pos.x = m_roomView.getCenter().x - m_game.window().getSize().x / 2 + (m_tileSize / 2) + (int(sf::Mouse::getPosition(m_game.window()).x) / m_tileSize) * m_tileSize;
+					t->getComponent<CTransform>().pos.y = m_roomView.getCenter().y - m_game.window().getSize().y / 2 + (m_tileSize / 2) + (int(sf::Mouse::getPosition(m_game.window()).y) / m_tileSize) * m_tileSize;
 				}
 				else
 				{
@@ -242,7 +242,7 @@ void GameState_Play::sDrawGrid()
 		float width = std::floor(m_game.window().getSize().x);
 		float roomX = width * RX;
 		float roomY = height * RY;
-		for (float x = roomX; x <= roomX + width; x += 64)
+		for (float x = roomX; x <= roomX + width; x += m_tileSize)
 		{
 			sf::Vertex line[] =
 			{
@@ -252,7 +252,7 @@ void GameState_Play::sDrawGrid()
 			};
 			m_game.window().draw(line, 3, sf::Lines);
 		}
-		for (float y = roomY; y <= roomY + height; y += 64)
+		for (float y = roomY; y <= roomY + height; y += m_tileSize)
 		{
 			sf::Vertex line[] =
 			{
@@ -519,6 +519,34 @@ void GameState_Play::sAI()
 				float angle = atan2(currentPos.y - t->getComponent<CTransform>().pos.y, currentPos.x - t->getComponent<CTransform>().pos.x);
 				t->getComponent<CTransform>().speed.x = cos(angle) * t->getComponent<CPatrol>().speed;
 				t->getComponent<CTransform>().speed.y = sin(angle) * t->getComponent<CPatrol>().speed;
+
+				//update the npc's facing
+				if (t->getComponent<CTransform>().speed.x > 0.1)
+				{
+					t->getComponent<CTransform>().facing.x = 1;
+				}
+				else if (t->getComponent<CTransform>().speed.x < -0.1)
+				{
+					t->getComponent<CTransform>().facing.x = -1;
+				}
+				else
+				{
+					t->getComponent<CTransform>().facing.x = 0;
+				}
+
+				//update the npc's facing
+				if (t->getComponent<CTransform>().speed.y > 0.1)
+				{
+					t->getComponent<CTransform>().facing.y = 1;
+				}
+				else if (t->getComponent<CTransform>().speed.y < -0.1)
+				{
+					t->getComponent<CTransform>().facing.y = -1;
+				}
+				else
+				{
+					t->getComponent<CTransform>().facing.y = 0;
+				}
 			}
 		}
 
@@ -695,8 +723,8 @@ void GameState_Play::saveLevel()
 		auto transform = tiles->getComponent<CTransform>();
 		RX = std::floor(transform.pos.x / width);
 		RY = std::floor(transform.pos.y / height);
-		TX = (transform.pos.x - RX * float(width)) / 64;
-		TY = (transform.pos.y - RY * float(height)) / 64;
+		TX = (transform.pos.x - RX * float(width)) / m_tileSize;
+		TY = (transform.pos.y - RY * float(height)) / m_tileSize;
 		BM = tiles->getComponent<CBoundingBox>().blockMove;
 		BV = tiles->getComponent<CBoundingBox>().blockVision;
 		writeFile << "Tile " << animationName << RX << " " << RY << " " << TX << " " << TY << " " << BM << " " << BV << "\n";
@@ -736,8 +764,8 @@ void GameState_Play::saveLevel()
 		auto transform = npc->getComponent<CTransform>();
 		RX = std::floor(transform.pos.x / width);
 		RY = std::floor(transform.pos.y / height);
-		TX = (transform.pos.x - RX * float(width)) / 64;
-		TY = (transform.pos.y - RY * float(height)) / 64;
+		TX = (transform.pos.x - RX * float(width)) / m_tileSize;
+		TY = (transform.pos.y - RY * float(height)) / m_tileSize;
 		BM = npc->getComponent<CBoundingBox>().blockMove;
 		BV = npc->getComponent<CBoundingBox>().blockVision;
 		if (npc->hasComponent<CFollowPlayer>())
@@ -761,7 +789,7 @@ void GameState_Play::saveLevel()
 				<< speed << " " << nPositions << " ";
 			for (Vec2 i : positions)
 			{
-				writeFile << int(i.x / 64) << " " << int(i.y / 64) << " ";
+				writeFile << int(i.x / m_tileSize) << " " << int(i.y / m_tileSize) << " ";
 			}
 			writeFile << "\n";
 		}
@@ -937,15 +965,9 @@ void GameState_Play::sAnimation()
 {
 	// A string that builds the animation name
 	std::string playerAnimation = "";
-	std::string swordAnimation = "Sword";
-	auto& swords = m_entityManager.getEntities("sword");
 
 	//Set the action part of the animation
-	if (!m_player->getComponent<CInput>().canShoot)
-	{
-		playerAnimation += "Atk";
-	}
-	else if (m_player->getComponent<CTransform>().speed.x != 0 || m_player->getComponent<CTransform>().speed.y != 0)
+	if (m_player->getComponent<CTransform>().speed.x != 0 || m_player->getComponent<CTransform>().speed.y != 0)
 	{
 		playerAnimation += "Run";
 	}
@@ -958,53 +980,57 @@ void GameState_Play::sAnimation()
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, 1))
 	{
 		playerAnimation += "Down";
-
-		swordAnimation += "Up";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.y = -1;
-		}
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, -1))
 	{
 		playerAnimation += "Up";
-
-		swordAnimation += "Up";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.y = 1;
-		}
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(1, 0))
 	{
 		playerAnimation += "Right";
 		m_player->getComponent<CTransform>().scale.x = 1;
-
-		swordAnimation += "Right";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.x = 1;
-		}
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(-1, 0))
 	{
 		playerAnimation += "Right";
 		m_player->getComponent<CTransform>().scale.x = -1;
-
-		swordAnimation += "Right";
-		for (auto sword : swords)
-		{
-			sword->getComponent<CTransform>().scale.x = -1;
-		}
 	}
 
 	//Update the animation of the player if it changed
 	if (m_player->getComponent<CAnimation>().animation.getName() != playerAnimation)
 	{
 		m_player->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation(playerAnimation);
-		for (auto sword : swords)
+	}
+
+	//update the enemies animations
+	for (auto& i : m_entityManager.getEntities("npc"))
+	{
+		// A string that builds the animation name
+		std::string enemyAnimation = "";
+		if (i->getComponent<CAnimation>().animation.getEntityName() == "Enemy2")
 		{
-			sword->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation(swordAnimation);
+			enemyAnimation += "En2";
+		}
+		if (i->getComponent<CTransform>().facing.x == 0)
+		{
+			enemyAnimation += "Jump";
+		}
+		else
+		{
+			enemyAnimation += "Walk";
+			if (i->getComponent<CTransform>().facing.x < 0)
+			{
+				i->getComponent<CTransform>().scale.x = -1;
+			}
+			else
+			{
+				i->getComponent<CTransform>().scale.x = 1;
+			}
+		}
+		//Update the animation of the enemy if it changed
+		if (i->getComponent<CAnimation>().animation.getName() != enemyAnimation)
+		{
+			i->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation(enemyAnimation);
 		}
 	}
 
@@ -1056,7 +1082,7 @@ void GameState_Play::sCamera()
 
 void GameState_Play::sRender()
 {
-	m_game.window().clear(sf::Color(255, 192, 122));
+	m_game.window().clear(sf::Color(0, 0, 0));
 
 	// draw all Entity textures / animations
 	if (m_drawTextures)
@@ -1301,7 +1327,7 @@ void GameState_Play::addEntity()
 	// if there is not existing entity, initialize using defaults
 	auto newEntity = m_entityManager.addEntity("tile");
 	newEntity->addComponent<CAnimation>(selectedAnimation, true);
-	newEntity->addComponent<CBoundingBox>(Vec2(64, 64), true, true);
+	newEntity->addComponent<CBoundingBox>(Vec2(m_tileSize, m_tileSize), true, true);
 	newEntity->addComponent<CTransform>(Vec2(0, 0));
 	newEntity->getComponent<CTransform>().prevPos = newEntity->getComponent<CTransform>().pos;
 	newEntity->addComponent<CDrag>();
