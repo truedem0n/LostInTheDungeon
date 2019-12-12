@@ -55,6 +55,22 @@ void GameState_Play::loadLevel(const std::string& filename)
 					>> m_playerConfig.CY >> m_playerConfig.SPEED;
 
 			}
+			else if (m_token == "BBox")
+			{
+				int  x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
+				bool BM, BV;
+				m_playerBlackBox = m_entityManager.addEntity("BBox");
+				infile >> m_token;
+				// animation
+				m_playerBlackBox->addComponent<CAnimation>(m_game.getAssets().
+					getAnimation(m_token), true);
+				// room coordinates, tile coordinates, block movement, and vision.
+				infile >> RX >> RY >> TX >> TY >> BM >> BV;
+				m_playerBlackBox->addComponent<CBoundingBox>(Vec2(x, y), BM, BV);
+				m_playerBlackBox->addComponent<CTransform>(Vec2(x * TX + RX * float(m_game.window().getSize().x) + x / 2, y * TY + RY * float(m_game.window().getSize().y) + y / 2));
+				m_playerBlackBox->getComponent<CTransform>().prevPos = m_playerBlackBox->getComponent<CTransform>().pos;
+				m_playerBlackBox->addComponent<CDrag>();
+			}
 			else if (m_token == "Tile")
 			{
 				//Tile Specification :
@@ -65,7 +81,7 @@ void GameState_Play::loadLevel(const std::string& filename)
 				//	Blocks Movement   BM        int(1 = true, 0 = false)
 				//	Blocks Vision     BV        int(1 = true, 0 = false)
 				int  x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
-				bool BM, BV;
+					bool BM, BV;
 				auto block = m_entityManager.addEntity("tile");
 				infile >> m_token;
 				// animation
@@ -277,7 +293,7 @@ void GameState_Play::spawnPlayer()
 	m_player->getComponent<CTransform>().prevPos = m_player->getComponent<CTransform>().pos;
 	m_player->addComponent<CAnimation>(m_game.getAssets().getAnimation("StandDown"), true);
 	// Cbounding box constructor needs bound size, blocksmovement, blocksvision
-	m_player->addComponent<CBoundingBox>(Vec2(m_playerConfig.CX, m_playerConfig.CY), true, true);
+	m_player->addComponent<CBoundingBox>(m_game.getAssets().getAnimation("StandDown").getSize(), true, true);
 	m_player->addComponent<CInput>();
 
 	// New element to CTransform: 'facing', to keep track of where the player is facing
@@ -342,6 +358,7 @@ void GameState_Play::update()
 
 void GameState_Play::sMovement()
 {
+
 	//TODO: remove this before submission (helpful for debugging)
 	//std::cout << m_player->getComponent<CTransform>().pos.x << "," << m_player->getComponent<CTransform>().pos.y << "\n";
 	// Implement player velocity from input
@@ -432,6 +449,9 @@ void GameState_Play::sMovement()
 			t->getComponent<CTransform>().pos += t->getComponent<CTransform>().speed;
 		}
 	}
+
+	m_playerBlackBox->getComponent<CTransform>().pos = m_player->getComponent<CTransform>().pos;
+	m_playerBlackBox->getComponent<CTransform>().pos.y -= 68;
 }
 
 void GameState_Play::inializeNavMesh()
@@ -922,7 +942,7 @@ void GameState_Play::sUserInput()
 					}
 				}
 				break;
-				}
+			}
 			}
 		}
 
@@ -1112,7 +1132,11 @@ void GameState_Play::sRender()
 				}
 				else
 				{
-					m_game.window().draw(animation.getSprite());
+					if (e->getComponent<CTransform>().pos.dist(m_player->getComponent<CTransform>().pos) <= 250)
+					{
+						m_game.window().draw(animation.getSprite());
+					}
+
 				}
 			}
 		}
@@ -1189,7 +1213,7 @@ void GameState_Play::sRender()
 		rectColor.a = 128;
 		menuRect.setFillColor(rectColor);
 		m_game.window().draw(menuRect);
-		
+
 		for (int i = 0; i < m_menuAnimations.size(); i++)
 		{
 			m_menuAnimations[i].getSprite().setPosition(xMenuPos, int((halfMenuRect * 2) * i + halfMenuRect) + yAdjust);
