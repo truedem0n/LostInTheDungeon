@@ -30,6 +30,7 @@ protected:
 	PlayerConfig            m_playerConfig;
 	std::vector<Animation>	m_menuAnimations;
 	size_t					m_menuIndex = 0;
+	size_t					m_tileSize = 128;
 	bool                    m_drawTextures = true;
 	bool                    m_drawCollision = false;
 	bool                    m_follow = false;

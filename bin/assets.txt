@@ -1,10 +1,10 @@
 Texture   TexExplode    images/misc/explosion128.png
-Texture   TexRunDown    images/liad/hero/walk_down.png              
-Texture   TexRunRight   images/tloz/run_right.png
-Texture   TexRunUp      images/tloz/run_up.png
+Texture   TexRunDown    images/liad/hero/stand_down.png              
+Texture   TexRunRight   images/liad/hero/stand_right.png
+Texture   TexRunUp      images/liad/hero/walk_down.png
 Texture   TexStandD     images/liad/hero/stand_down.png              
-Texture   TexStandR     images/liad/hero/stand_right.png
-Texture   TexStandU     images/tloz/stand_up.png
+Texture   TexStandR     images/liad/hero/stand_down.png
+Texture   TexStandU     images/liad/hero/stand_down.png
 Texture   TexDarkD      images/liad/hero/dark_down.png 
 Texture   TexAtkDown    images/tloz/attack_down.png
 Texture   TexAtkRight   images/tloz/attack_right.png
@@ -30,8 +30,8 @@ Texture   TexWaterBM    images/tloz/green/tile_water_bm.png
 Texture   TexWaterBR    images/tloz/green/tile_water_br.png
 Texture   TexBush       images/tloz/green/tile_bush.png
 Texture   TexBlack      images/tloz/tile_black.png
-Texture   TexSpikesD    images/liad/tiles/spikes_down.png
-Texture   TexSpikesU    images/liad/tiles/spikes_up.png
+Texture   TexFloor      images/liad/tiles/floor.png
+Texture   TexSpikesD    images/liad/tiles/spikes_up.png
 Texture   TexTektite    images/tloz/tektite.png
 Texture   TexKnight     images/tloz/knight.png
 Texture   TexEn1Die     images/liad/enemy_1/enemy_dead.png
@@ -47,12 +47,12 @@ Texture   TexBossJump   images/liad/boss/boss_jump.png
 Texture   TexBossStandD images/liad/boss/stand_down.png
 Texture   TexBossStandR images/liad/boss/stand_right.png
 Animation Explosion     TexExplode     48    2 none 0 
-Animation RunDown       TexRunDown      1   15 Link 0
-Animation RunRight      TexRunRight     2   15 Link 0
-Animation RunUp         TexRunUp        2   15 Link 0
-Animation StandDown     TexStandD       1    0 Link 0
-Animation StandRight    TexStandR       1    0 Link 0
-Animation StandUp       TexStandU       1    0 Link 0
+Animation RunDown       TexRunDown      1   15 Hero 0
+Animation RunRight      TexRunRight     1   15 Hero 0
+Animation RunUp         TexRunUp        1   15 Hero 0
+Animation StandDown     TexStandD       1    0 Hero 0
+Animation StandRight    TexStandR       1    0 Hero 0
+Animation StandUp       TexStandU       1    0 Hero 0
 Animation Tektite       TexTektite      2   10 Tektite 1
 Animation Knight        TexKnight       2   10 Knight 1
 Animation AtkUp         TexAtkUp        1    0 Link 0
@@ -77,6 +77,8 @@ Animation WaterBL       TexWaterBL      1    0 Water 0
 Animation WaterBM       TexWaterBM      1    0 Water 0
 Animation WaterBR       TexWaterBR      1    0 Water 0
 Animation Bush          TexBush         1    0 Bush 1
+Animation Floor         TexFloor        1    0 Floor 1
+Animation SpikesD       TexSpikesD      1    0 Spikes 1
 Font      Arial      fonts/arial.ttf
 Font      Mario      fonts/mario.ttf
 Font      Megaman    fonts/megaman.ttf
