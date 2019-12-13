@@ -51,6 +51,10 @@ Texture   GravityWellS  images/liad/gravitywell.png
 Texture   WallT         images/liad/tiles/wall.png
 Texture   ExitStairs    images/liad/tiles/tile_stairs.png
 Texture   TexFire       images/liad/sprites/fire.png
+Texture   TexArrowR       images/liad/sprites/arrowR.png
+Texture   TexArrowU       images/liad/sprites/arrowU.png
+Animation ArrowR         TexArrowR       1     0 arrow 0
+Animation ArrowU         TexArrowU       1     0 arrow 0
 Animation ExitPoint     ExitStairs     1     0 stairs 1
 Animation Explosion     TexExplode     48    2 none 0 
 Animation RunDown       TexRunDown      1   15 Hero 0
