@@ -33,7 +33,7 @@ void GameState_Menu::init(const std::string & menuConfig)
 	m_levelPaths.push_back("level1.txt");
 	m_levelPaths.push_back("level2.txt");
 	m_levelPaths.push_back("level3.txt");
-	//m_levelPaths.push_back("studentlevel.txt");
+	m_levelPaths.push_back("test.txt");
 
     m_menuText.setFont(m_game.getAssets().getFont("PeicesNfi"));
     m_menuText.setCharacterSize(128);

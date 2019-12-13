@@ -64,6 +64,7 @@ void Assets::addTexture(const std::string& textureName, const std::string& path,
 
 const sf::Texture& Assets::getTexture(const std::string& textureName) const
 {
+	std::cout << textureName;
 	assert(m_textureMap.find(textureName) != m_textureMap.end());
 	return m_textureMap.at(textureName);
 }

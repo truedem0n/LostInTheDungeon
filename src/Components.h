@@ -75,9 +75,9 @@ public:
 class CGravity : public Component
 {
 public:
-    float gravity;
+    Vec2 gravity;
     CGravity() {}
-    CGravity(float g) : gravity(g) {}
+    CGravity(Vec2 g) : gravity(g) {}
 };
 
 class CState : public Component

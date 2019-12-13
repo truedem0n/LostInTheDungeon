@@ -56,6 +56,7 @@ protected:
     void spawnPlayer();
     void spawnSword(std::shared_ptr<Entity> entity);
 	void inializeNavMesh();
+	Vec2 GameState_Play::applyAttraction();
 	Vec2 resolveNavigation(int xPos, int yPos, float speed);
 
 	void sMovement();
