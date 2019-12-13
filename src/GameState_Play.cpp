@@ -319,6 +319,8 @@ void GameState_Play::spawnPlayer()
 	m_player->addComponent<CBoundingBox>(m_game.getAssets().getAnimation("StandDown").getSize(), true, true);
 	m_player->addComponent<CInput>();
 	m_player->addComponent<CInventory>();
+	m_player->getComponent<CInventory>().items.push_back(m_game.getAssets().getAnimation("SwordRight"));
+	m_player->getComponent<CInventory>().counts.push_back(-1);
 	m_player->getComponent<CInventory>().items.push_back(m_game.getAssets().getAnimation("fire"));
 	m_player->getComponent<CInventory>().counts.push_back(5);
 
@@ -1495,12 +1497,20 @@ void GameState_Play::manageInventory()
 			m_menuAnimations.push_back(m_player->getComponent<CInventory>().items[i]);
 			sf::Text number;
 			number.setString(std::to_string(m_player->getComponent<CInventory>().counts[i]));
+			if (m_player->getComponent<CInventory>().counts[i] >= 0)
+			{
+				number.setString(std::to_string(m_player->getComponent<CInventory>().counts[i]));
+			}
+			else
+			{
+				number.setString("");
+			}
 			number.setFont(m_game.getAssets().getFont("Megaman"));
 			number.setCharacterSize(12);
 			number.setOrigin(number.getLocalBounds().width / 2, number.getLocalBounds().height / 2);
 			m_menuText.push_back(number);
 		}
-		m_menuIndex = -2;
+		m_menuIndex = 0;
 		m_showInventory = true;
 		m_hasMenu = true;
 	}
