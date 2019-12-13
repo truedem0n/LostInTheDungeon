@@ -1496,7 +1496,6 @@ void GameState_Play::manageInventory()
 		{
 			m_menuAnimations.push_back(m_player->getComponent<CInventory>().items[i]);
 			sf::Text number;
-			number.setString(std::to_string(m_player->getComponent<CInventory>().counts[i]));
 			if (m_player->getComponent<CInventory>().counts[i] >= 0)
 			{
 				number.setString(std::to_string(m_player->getComponent<CInventory>().counts[i]));
