@@ -18,6 +18,7 @@
     <ClCompile Include="..\src\GameEngine.cpp" />
     <ClCompile Include="..\src\GameState.cpp" />
     <ClCompile Include="..\src\GameState_Menu.cpp" />
+    <ClCompile Include="..\src\GameState_Over.cpp" />
     <ClCompile Include="..\src\GameState_Play.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Physics.cpp" />
@@ -33,6 +34,7 @@
     <ClInclude Include="..\src\GameEngine.h" />
     <ClInclude Include="..\src\GameState.h" />
     <ClInclude Include="..\src\GameState_Menu.h" />
+    <ClInclude Include="..\src\GameState_Over.h" />
     <ClInclude Include="..\src\GameState_Play.h" />
     <ClInclude Include="..\src\Physics.h" />
     <ClInclude Include="..\src\Vec2.h" />
