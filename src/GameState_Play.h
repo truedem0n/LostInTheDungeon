@@ -41,7 +41,7 @@ protected:
 	bool					m_hasMenu = false;
 	bool					m_addEntity = false;
 	sf::Clock               m_clock;
-	int navmesh[60][36];
+	int navmesh[12][10];
 	void init(const std::string& levelPath);
 
 	void loadLevel(const std::string& filename);

@@ -50,6 +50,7 @@ Texture   TexBossStandR images/liad/boss/stand_right.png
 Texture   GravityWellS  images/liad/gravitywell.png
 Texture   WallT         images/liad/tiles/wall.png
 Texture   ExitStairs    images/liad/tiles/tile_stairs.png
+Texture   TexFire       images/liad/sprites/fire.png
 Animation ExitPoint     ExitStairs     1     0 stairs 1
 Animation Explosion     TexExplode     48    2 none 0 
 Animation RunDown       TexRunDown      1   15 Hero 0
@@ -95,6 +96,7 @@ Animation Floor         TexFloor        1    0 Floor 1
 Animation SpikesD       TexSpikesD      1    0 Spikes 1
 Animation BBoxV         BlackBoxV       1    0 BBox 1
 Animation GWell         GravityWellS    4   5 Gravity 0
+Animation fire          TexFire         4   2 Fire 0
 Font      Arial         fonts/arial.ttf
 Font      Mario         fonts/mario.ttf
 Font      Megaman       fonts/megaman.ttf
