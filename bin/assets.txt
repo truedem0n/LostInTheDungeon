@@ -59,8 +59,8 @@ Animation RunUp         TexRunUp        1   15 Hero 0
 Animation StandDown     TexStandD       1    0 Hero 0
 Animation StandRight    TexStandR       1    0 Hero 0
 Animation StandUp       TexStandU       1    0 Hero 0
-Animation Tektite       TexTektite      2   10 Tektite 1
-FAnimation Knight        TexKnight       2   10 Knight 1
+FAnimation Tektite       TexTektite      2   10 Tektite 0
+FAnimation Knight        TexKnight       2   10 Knight 0
 Animation En1Die        TexEn1Die       3   10 Enemy1 0
 Animation En1Jump       TexEn1Jump      3   10 Enemy1 0
 Animation En1Stand      TexEn1Stand     1   10 Enemy1 1
@@ -74,12 +74,12 @@ Animation AtkDown       TexAtkDown      1    0 Link 0
 Animation AtkRight      TexAtkRight     1    0 Link 0
 Animation SwordUp       TexSwordUp      1    0 none 0
 Animation SwordRight    TexSwordRight   1    0 none 0
-Animation Black         TexBlack        1    0 Cave 1
+FAnimation Black         TexBlack        1    0 Cave 1
 Animation RockTL        TexRockTL       1    0 Rock 0
 Animation RockTM        TexRockTM       1    0 Rock 0
 Animation RockTR        TexRockTR       1    0 Rock 0
 Animation RockBL        TexRockBL       1    0 Rock 0
-Animation RockBM        TexRockBM       1    0 Rock 1
+FAnimation RockBM        TexRockBM       1    0 Rock 1
 Animation RockBR        TexRockBR       1    0 Rock 0
 Animation WallA         WallT           1    0 Wall 1 
 FAnimation WaterTL       TexWaterTL      1    0 Water 0
@@ -91,12 +91,12 @@ FAnimation WaterMR       TexWaterMR      1    0 Water 0
 FAnimation WaterBL       TexWaterBL      1    0 Water 0
 FAnimation WaterBM       TexWaterBM      1    0 Water 0
 FAnimation WaterBR       TexWaterBR      1    0 Water 0
-Animation Bush          TexBush         1    0 Bush 1
+FAnimation Bush          TexBush         1    0 Bush 1
 Animation Floor         TexFloor        1    0 Floor 1
 Animation SpikesD       TexSpikesD      1    0 Spikes 1
-Animation BBoxV         BlackBoxV       1    0 BBox 1
-Animation GWell         GravityWellS    4   5 Gravity 0
-Animation fire          TexFire         4   2 Fire 0
+Animation BBoxV         BlackBoxV       1    0 BBox 0
+Animation GWell         GravityWellS    4   5 Gravity 1
+Animation fire          TexFire         4   2 Fire 1
 Font      Arial         fonts/arial.ttf
 Font      Mario         fonts/mario.ttf
 Font      Megaman       fonts/megaman.ttf
