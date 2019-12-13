@@ -32,6 +32,7 @@ Texture   TexBush       images/tloz/green/tile_bush.png
 Texture   TexBlack      images/tloz/tile_black.png
 Texture   TexFloor      images/liad/tiles/floor.png
 Texture   TexSpikesD    images/liad/tiles/spikes_up.png
+Texture   TexWall       images/liad/tiles/wall.png
 Texture   TexTektite    images/tloz/tektite.png
 Texture   TexKnight     images/tloz/knight.png
 Texture   TexEn1Die     images/liad/enemy_1/death.png
@@ -87,6 +88,7 @@ Animation WaterBR       TexWaterBR      1    0 Water 0
 Animation Bush          TexBush         1    0 Bush 1
 Animation Floor         TexFloor        1    0 Floor 1
 Animation SpikesD       TexSpikesD      1    0 Spikes 1
+Animation Wall          TexWall         1    0 Wall 1
 Font      Arial      fonts/arial.ttf
 Font      Mario      fonts/mario.ttf
 Font      Megaman    fonts/megaman.ttf

@@ -79,11 +79,11 @@ void GameState_Play::loadLevel(const std::string& filename)
 				block->addComponent<CDrag>();
 
 				//remove this tile from the navigation mesh
-				int navx = ((RX + 1) * 20) + TX;
-				int navy = ((RY + 1) * 12) + TY;
+				int navx = ((RX) * 10) + TX;
+				int navy = ((RY + 1) * 6) + TY;
 				if (BM)
 				{
-					navmesh[navx][navy] = -1;
+					navmesh[navy][navx] = -1;
 				}
 			}
 			else if (m_token == "NPC")
@@ -400,8 +400,8 @@ void GameState_Play::sMovement()
 	m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().speed;
 
 	// check if the player moved tiles
-	if (m_playerConfig.NPChasPathFinding && (floor(m_player->getComponent<CTransform>().pos.x / 64) - floor(m_player->getComponent<CTransform>().prevPos.x / 64) != 0 ||
-		floor(m_player->getComponent<CTransform>().pos.y / 64) - floor(m_player->getComponent<CTransform>().prevPos.y / 64) != 0))
+	if (m_playerConfig.NPChasPathFinding && (floor(m_player->getComponent<CTransform>().pos.x / m_tileSize) - floor(m_player->getComponent<CTransform>().prevPos.x / m_tileSize) != 0 ||
+		floor(m_player->getComponent<CTransform>().pos.y / m_tileSize) - floor(m_player->getComponent<CTransform>().prevPos.y / m_tileSize) != 0))
 	{
 		// initialize navigation mesh
 		inializeNavMesh();
@@ -441,17 +441,17 @@ void GameState_Play::inializeNavMesh()
 	std::vector<Vec2> initializedList;
 
 	//initialize the player's position to 0
-	int xPlayerTilePos = floor(m_player->getComponent<CTransform>().pos.x / 64) + 20;
-	int yPlayerTilePos = floor(m_player->getComponent<CTransform>().pos.y / 64) + 12;
-	navmesh[xPlayerTilePos][yPlayerTilePos] = 0;
-	openList.push_back(Vec2(xPlayerTilePos, yPlayerTilePos));
-	initializedList.push_back(Vec2(xPlayerTilePos, yPlayerTilePos));
+	int xPlayerTilePos = floor(m_player->getComponent<CTransform>().pos.x / m_tileSize);
+	int yPlayerTilePos = floor(m_player->getComponent<CTransform>().pos.y / m_tileSize) + 6;
+	navmesh[yPlayerTilePos][xPlayerTilePos] = 0;
+	openList.push_back(Vec2(yPlayerTilePos, xPlayerTilePos));
+	initializedList.push_back(Vec2(yPlayerTilePos, xPlayerTilePos));
 	int count = 0;
 
 	// reset navmesh
-	for (int i = 0; i < 60; i++)
+	for (int i = 0; i < 12; i++)
 	{
-		for (int j = 0; j < 36; j++)
+		for (int j = 0; j < 10; j++)
 		{
 			if (navmesh[i][j] != -1)
 			{
@@ -464,19 +464,49 @@ void GameState_Play::inializeNavMesh()
 	while (!openList.empty())
 	{
 		Vec2 nextTile = openList[0];
-		for (int i = -1; i <= 1; i++)
+		int i = 0;
+		int j = -1;
+
+		// check if tile is in bounds, can be moved through, and hasn't been updated
+		if (nextTile.x + i < 12 && nextTile.x + i >= 0 && nextTile.y + j < 10 && nextTile.y + j >= 0 &&
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] != -1 && std::find(initializedList.begin(), initializedList.end(), Vec2(nextTile.x + i, nextTile.y + j)) == initializedList.end())
 		{
-			for (int j = -1; j <= 1; j++)
-			{
-				// check if tile is in bounds, can be moved through, and hasn't been updated
-				if (nextTile.x + i < 60 && nextTile.x + i >= 0 && nextTile.y + j < 36 && nextTile.y + j >= 0 &&
-					navmesh[int(nextTile.x) + i][int(nextTile.y) + j] != -1 && std::find(initializedList.begin(), initializedList.end(), Vec2(nextTile.x + i, nextTile.y + j)) == initializedList.end())
-				{
-					navmesh[int(nextTile.x) + i][int(nextTile.y) + j] = navmesh[int(nextTile.x)][int(nextTile.y)] + 1;
-					openList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
-					initializedList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
-				}
-			}
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] = navmesh[int(nextTile.x)][int(nextTile.y)] + 1;
+			openList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+			initializedList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+		}
+
+		i = 0;
+		j = 1;
+		// check if tile is in bounds, can be moved through, and hasn't been updated
+		if (nextTile.x + i < 12 && nextTile.x + i >= 0 && nextTile.y + j < 10 && nextTile.y + j >= 0 &&
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] != -1 && std::find(initializedList.begin(), initializedList.end(), Vec2(nextTile.x + i, nextTile.y + j)) == initializedList.end())
+		{
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] = navmesh[int(nextTile.x)][int(nextTile.y)] + 1;
+			openList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+			initializedList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+		}
+
+		i = 1;
+		j = 0;
+		// check if tile is in bounds, can be moved through, and hasn't been updated
+		if (nextTile.x + i < 12 && nextTile.x + i >= 0 && nextTile.y + j < 10 && nextTile.y + j >= 0 &&
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] != -1 && std::find(initializedList.begin(), initializedList.end(), Vec2(nextTile.x + i, nextTile.y + j)) == initializedList.end())
+		{
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] = navmesh[int(nextTile.x)][int(nextTile.y)] + 1;
+			openList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+			initializedList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+		}
+
+		i = -1;
+		j = 0;
+		// check if tile is in bounds, can be moved through, and hasn't been updated
+		if (nextTile.x + i < 12 && nextTile.x + i >= 0 && nextTile.y + j < 10 && nextTile.y + j >= 0 &&
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] != -1 && std::find(initializedList.begin(), initializedList.end(), Vec2(nextTile.x + i, nextTile.y + j)) == initializedList.end())
+		{
+			navmesh[int(nextTile.x) + i][int(nextTile.y) + j] = navmesh[int(nextTile.x)][int(nextTile.y)] + 1;
+			openList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
+			initializedList.push_back(Vec2(nextTile.x + i, nextTile.y + j));
 		}
 		openList.erase(openList.begin());
 	}
@@ -486,20 +516,20 @@ Vec2 GameState_Play::resolveNavigation(int xPos, int yPos, float speed)
 {
 	int lDist, rDist, uDist, dDist;
 
-	if (xPos == 0 || navmesh[xPos - 1][yPos] == -1) { lDist = navmesh[xPos][yPos]; }
-	else { lDist = navmesh[xPos - 1][yPos]; }
+	if (xPos == 0 || navmesh[yPos - 1][xPos] == -1) { lDist = navmesh[yPos][xPos]; }
+	else { lDist = navmesh[yPos - 1][xPos]; }
 
-	if (xPos == 59 || navmesh[xPos + 1][yPos] == -1) { rDist = navmesh[xPos][yPos]; }
-	else { rDist = navmesh[xPos + 1][yPos]; }
+	if (xPos == 59 || navmesh[yPos + 1][xPos] == -1) { rDist = navmesh[yPos][xPos]; }
+	else { rDist = navmesh[yPos + 1][xPos]; }
 
-	if (yPos == 0 || navmesh[xPos][yPos - 1] == -1) { uDist = navmesh[xPos][yPos]; }
-	else { uDist = navmesh[xPos][yPos - 1]; }
+	if (yPos == 0 || navmesh[yPos][xPos - 1] == -1) { uDist = navmesh[yPos][xPos]; }
+	else { uDist = navmesh[yPos][xPos - 1]; }
 
-	if (yPos == 35 || navmesh[xPos][yPos + 1] == -1) { dDist = navmesh[xPos][yPos]; }
-	else { dDist = navmesh[xPos][yPos + 1]; }
+	if (yPos == 35 || navmesh[yPos][xPos + 1] == -1) { dDist = navmesh[yPos][xPos]; }
+	else { dDist = navmesh[yPos][xPos + 1]; }
 
 	float angle = atan2(uDist - dDist, lDist - rDist);
-	return Vec2(cos(angle) * speed, sin(angle) * speed);
+	return Vec2(sin(angle) * speed, cos(angle) * speed);
 }
 
 void GameState_Play::sAI()
@@ -577,33 +607,37 @@ void GameState_Play::sAI()
 				}
 
 			}
+			if (t->getComponent<CFollowPlayer>().smartFollow&& t->getComponent<CFollowPlayer>().activated)
+			{
+				//Get a vector for each tile the enemy overlaps so the enemy doesn't get stuck
+				float xPos = (t->getComponent<CTransform>().pos.x / m_tileSize) - 0.5;
+				float yPos = (t->getComponent<CTransform>().pos.y / m_tileSize) - 0.5;
+				int xPos2 = floor(xPos);
+				int yPos2 = floor(yPos) + 6;
+				Vec2 speed1 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
+
+				xPos2 = ceil(xPos);
+				yPos2 = floor(yPos) + 6;
+				Vec2 speed2 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
+
+				xPos2 = floor(xPos);
+				yPos2 = ceil(yPos) + 6;
+				Vec2 speed3 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
+
+				xPos2 = ceil(xPos);
+				yPos2 = ceil(yPos) + 6;
+				Vec2 speed4 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
+				speed1 += speed2;
+				speed1 += speed3;
+				speed1 += speed4;
+				t->getComponent<CTransform>().speed = speed1 / 4;
+			}
 			// if npc can see player 
-			if (!blocked)
+			else if (!blocked)
 			{
 				if (t->getComponent<CFollowPlayer>().smartFollow)
 				{
-					//Get a vector for each tile the enemy overlaps so the enemy doesn't get stuck
-					float xPos = (t->getComponent<CTransform>().pos.x / 64) - 0.5;
-					float yPos = (t->getComponent<CTransform>().pos.y / 64) - 0.5;
-					int xPos2 = floor(xPos) + 20;
-					int yPos2 = floor(yPos) + 12;
-					Vec2 speed1 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
-
-					xPos2 = ceil(xPos) + 20;
-					yPos2 = floor(yPos) + 12;
-					Vec2 speed2 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
-
-					xPos2 = floor(xPos) + 20;
-					yPos2 = ceil(yPos) + 12;
-					Vec2 speed3 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
-
-					xPos2 = ceil(xPos) + 20;
-					yPos2 = ceil(yPos) + 12;
-					Vec2 speed4 = resolveNavigation(xPos2, yPos2, t->getComponent<CFollowPlayer>().speed);
-					speed1 += speed2;
-					speed1 += speed3;
-					speed1 += speed4;
-					t->getComponent<CTransform>().speed = speed1 / 4;
+					t->getComponent<CFollowPlayer>().activated = true;
 				}
 				else
 				{
@@ -1007,10 +1041,19 @@ void GameState_Play::sAnimation()
 	{
 		// A string that builds the animation name
 		std::string enemyAnimation = "";
-		if (i->getComponent<CAnimation>().animation.getEntityName() == "Enemy2")
+		if (i->getComponent<CAnimation>().animation.getEntityName() == "Enemy1")
+		{
+			enemyAnimation += "En1";
+		}
+		else if (i->getComponent<CAnimation>().animation.getEntityName() == "Enemy2")
 		{
 			enemyAnimation += "En2";
 		}
+		else
+		{
+			enemyAnimation += "Boss";
+		}
+
 		if (i->getComponent<CTransform>().facing.x == 0)
 		{
 			enemyAnimation += "Jump";

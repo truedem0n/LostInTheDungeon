@@ -95,6 +95,7 @@ public:
     Vec2 home = { 0, 0 };
     float speed = 0;
 	bool smartFollow = false;
+	bool activated = false;
     CFollowPlayer() {}
     CFollowPlayer(Vec2 p, float s, bool f)
         : home(p), speed(s), smartFollow(f) {}
