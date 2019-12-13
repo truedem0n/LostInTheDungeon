@@ -26,6 +26,7 @@ protected:
 	std::shared_ptr<Entity> m_changeAnimation;
 	std::string             m_levelPath;
 	std::string             m_fileName = "";
+	std::string             m_activeWeapon = "arrow";
 	sf::Text				m_fileNameToDraw;
 	sf::Shader				shader, shader1, shader2;
 	PlayerConfig            m_playerConfig;
@@ -55,8 +56,9 @@ protected:
     void update();
     void spawnPlayer();
     void spawnSword(std::shared_ptr<Entity> entity);
+	void spawnArrow(std::shared_ptr<Entity> entity);
 	void inializeNavMesh();
-	Vec2 GameState_Play::applyAttraction();
+	Vec2 applyAttraction();
 	Vec2 resolveNavigation(int xPos, int yPos, float speed);
 
 	void sMovement();
