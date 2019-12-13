@@ -19,6 +19,11 @@ protected:
     std::vector<std::string>    m_levelPaths;
     sf::Text                    m_menuText;
     size_t                      m_selectedMenuIndex = 0;
+	bool						m_inMainMenu = true;
+	sf::Music					m_music;
+	sf::SoundBuffer				m_buffer;
+	std::string                 m_charGenerator = "abcdefghijklmnopqrstuvwxyz";
+	sf::Sound					m_sound;
     
     void init(const std::string & menuConfig);
     void update();
@@ -28,5 +33,6 @@ protected:
 public:
 
     GameState_Menu(GameEngine & game);
+	void GameState_Menu::playMusic();
 
 };

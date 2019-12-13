@@ -15,6 +15,11 @@ GameState_Play::GameState_Play(GameEngine& game, const std::string& levelPath)
 
 void GameState_Play::init(const std::string& levelPath)
 {
+	if (!m_music.openFromFile("sounds/" + levelPath + ".wav"))
+		std::cout << "error loading music file"; // error
+	m_music.play();
+	m_music.setLoop(true);
+	m_music.setVolume(10);
 	loadLevel(levelPath);
 }
 
@@ -55,6 +60,20 @@ void GameState_Play::loadLevel(const std::string& filename)
 					>> m_playerConfig.CY >> m_playerConfig.SPEED;
 
 			}
+			else if (m_token == "BBox")
+			{
+				int  x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
+				bool BM, BV;
+				m_playerBlackBox = m_entityManager.addEntity("BBox");
+				infile >> m_token;
+				// animation
+				m_playerBlackBox->addComponent<CAnimation>(m_game.getAssets().
+					getAnimation(m_token), true);
+				// room coordinates, tile coordinates, block movement, and vision.
+				infile >> RX >> RY >> TX >> TY >> BM >> BV;
+				m_playerBlackBox->addComponent<CTransform>(Vec2(x * TX + RX * float(m_game.window().getSize().x) + x / 2, y * TY + RY * float(m_game.window().getSize().y) + y / 2));
+				m_playerBlackBox->getComponent<CTransform>().prevPos = m_playerBlackBox->getComponent<CTransform>().pos;
+			}
 			else if (m_token == "Tile")
 			{
 				//Tile Specification :
@@ -64,10 +83,29 @@ void GameState_Play::loadLevel(const std::string& filename)
 				//	Tile Position     TX TY     int, int
 				//	Blocks Movement   BM        int(1 = true, 0 = false)
 				//	Blocks Vision     BV        int(1 = true, 0 = false)
+				infile >> m_token;
+				std::shared_ptr<Entity> block;
+
+				if (m_token == "Floor" || m_token == "WallA")
+				{
+					block = m_entityManager.addEntity("tile");
+				}
+				else if (m_token == "GWell")
+				{
+					block = m_entityManager.addEntity("GWell");
+				}
+				else if (m_token == "ExitPoint")
+				{
+					block = m_entityManager.addEntity("ExitPoint");
+				}
+				else
+				{
+					block = m_entityManager.addEntity("trap");
+				}
+
 				int  x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
 				bool BM, BV;
-				auto block = m_entityManager.addEntity("tile");
-				infile >> m_token;
+				//infile >> m_token;
 				// animation
 				block->addComponent<CAnimation>(m_game.getAssets().
 					getAnimation(m_token), true);
@@ -277,7 +315,7 @@ void GameState_Play::spawnPlayer()
 	m_player->getComponent<CTransform>().prevPos = m_player->getComponent<CTransform>().pos;
 	m_player->addComponent<CAnimation>(m_game.getAssets().getAnimation("StandDown"), true);
 	// Cbounding box constructor needs bound size, blocksmovement, blocksvision
-	m_player->addComponent<CBoundingBox>(Vec2(m_playerConfig.CX, m_playerConfig.CY), true, true);
+	m_player->addComponent<CBoundingBox>(m_game.getAssets().getAnimation("StandDown").getSize(), true, true);
 	m_player->addComponent<CInput>();
 
 	// New element to CTransform: 'facing', to keep track of where the player is facing
@@ -334,7 +372,7 @@ void GameState_Play::update()
 		sAnimation();
 		sDrag();
 	}
-
+	applyAttraction();
 	sCamera();
 	sUserInput();
 	sRender();
@@ -342,6 +380,7 @@ void GameState_Play::update()
 
 void GameState_Play::sMovement()
 {
+
 	//TODO: remove this before submission (helpful for debugging)
 	//std::cout << m_player->getComponent<CTransform>().pos.x << "," << m_player->getComponent<CTransform>().pos.y << "\n";
 	// Implement player velocity from input
@@ -432,6 +471,15 @@ void GameState_Play::sMovement()
 			t->getComponent<CTransform>().pos += t->getComponent<CTransform>().speed;
 		}
 	}
+	if (m_playerBlackBox != NULL)
+		m_playerBlackBox->getComponent<CTransform>().pos = m_player->getComponent<CTransform>().pos;
+	//m_playerBlackBox->getComponent<CTransform>().pos.y -= 68;
+
+	if (m_player->hasComponent<CGravity>())
+	{
+		m_player->getComponent<CTransform>().pos += m_player->getComponent<CGravity>().gravity;
+	}
+
 }
 
 void GameState_Play::inializeNavMesh()
@@ -510,6 +558,58 @@ void GameState_Play::inializeNavMesh()
 		}
 		openList.erase(openList.begin());
 	}
+}
+
+Vec2 GameState_Play::applyAttraction()
+{
+	auto gwells = m_entityManager.getEntities("GWell");
+	for (auto t : gwells)
+	{
+		bool blocked = false;
+		for (auto thisEntity : m_entityManager.getEntities("tile"))
+		{
+			// if thisEntity's vision is blocked then set blocked true 
+			if (thisEntity->hasComponent<CBoundingBox>())
+			{
+				if (thisEntity->getComponent<CBoundingBox>().blockVision == true)
+				{
+					if (thisEntity != t && thisEntity != m_player)
+					{
+						bool intersect = Physics::EntityIntersect(m_player->getComponent<CTransform>().pos, t->getComponent<CTransform>().pos, thisEntity);
+						if (intersect)
+						{
+							blocked = true;
+							break;
+
+						}
+					}
+
+				}
+			}
+
+		}
+		if (!blocked)
+		{
+
+			Vec2 d = m_player->getComponent<CTransform>().pos - t->getComponent<CTransform>().pos;
+			float distance = m_player->getComponent<CTransform>().pos.dist(t->getComponent<CTransform>().pos);
+			std::cout << distance << "\n";
+			distance = -2000 / distance;
+			float angle = atan2f(d.y, d.x);
+			Vec2 gravity = Vec2(distance * cos(angle), distance * sin(angle));
+			m_player->addComponent<CGravity>(gravity);
+			std::cout << gravity.x << "," << gravity.y << "," << distance << "\n";
+		}
+		else
+		{
+			if (m_player->hasComponent<CGravity>())
+			{
+				m_player->removeComponent<CGravity>();
+			}
+		}
+	}
+
+	return Vec2(0, 0);
 }
 
 Vec2 GameState_Play::resolveNavigation(int xPos, int yPos, float speed)
@@ -850,9 +950,9 @@ void GameState_Play::sCollision()
 {
 	// Implement Collision detection / resolution
 	auto& tile = m_entityManager.getEntities("tile");
+	auto npc = m_entityManager.getEntities("npc");
 	for (auto i : tile)
 	{
-		auto npc = m_entityManager.getEntities("npc");
 		if (i->getComponent<CBoundingBox>().blockMove)
 		{
 			for (auto n : npc)
@@ -860,6 +960,33 @@ void GameState_Play::sCollision()
 				sEntityCollision(n, i);
 			}
 			sEntityCollision(m_player, i);
+		}
+	}
+
+	// trap player collision
+	auto& traps = m_entityManager.getEntities("trap");
+	//auto& sword = m_entityManager.getEntities("sword");
+	for (auto i : traps)
+	{
+		auto overlap = Physics::GetOverlap(i, m_player);
+
+		if (overlap.x > 0 && overlap.y > 0)
+		{
+			m_player->destroy();
+			spawnPlayer();
+		}
+
+		for (auto j : npc)
+		{
+			auto currOverlap = Physics::GetOverlap(i, j);
+			if (currOverlap.x > 0 && currOverlap.y > 0)
+			{
+				auto exp = m_entityManager.addEntity("exp");
+				exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("En2Die"), false);
+				exp->addComponent<CTransform>();
+				exp->getComponent<CTransform>().pos = i->getComponent<CTransform>().pos;
+				j->destroy();
+			}
 		}
 	}
 
@@ -884,21 +1011,19 @@ void GameState_Play::sCollision()
 
 			if (currOverlap.x > 0 && currOverlap.y > 0)
 			{
-				if (i->hasComponent<CBoundingBox>()) {
-					i->getComponent<CTransform>().speed = Vec2(0, 0);
-					i->removeComponent<CBoundingBox>();
-					i->getComponent<CAnimation>().animation =
-						m_game.getAssets().getAnimation("Explosion");
-					i->getComponent<CAnimation>().repeat = false;
-					if (i->hasComponent<CFollowPlayer>())
-					{
-						i->getComponent<CFollowPlayer>().smartFollow = false;
-					}
-				}
-
-
+				auto exp = m_entityManager.addEntity("exp");
+				exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("En2Die"), false);
+				exp->addComponent<CTransform>();
+				exp->getComponent<CTransform>().pos = i->getComponent<CTransform>().pos;
+				i->destroy();
 			}
 		}
+	}
+	for (auto i : m_entityManager.getEntities("ExitPoint")) 
+	{
+		auto currOverlap = Physics::GetOverlap(m_player, i);
+		if (currOverlap.x > 0 && currOverlap.y > 0)
+			m_game.popState();
 	}
 }
 
@@ -924,7 +1049,14 @@ void GameState_Play::sUserInput()
 			case sf::Keyboard::F: { m_drawCollision = !m_drawCollision; break; }
 			case sf::Keyboard::Y: { m_follow = !m_follow; break; }
 			case sf::Keyboard::P: { setPaused(!m_paused); break; }
-
+			case sf::Keyboard::Q:
+			{
+				if (m_music.getStatus() == m_music.Stopped)
+					m_music.play();
+				else
+					m_music.stop();
+				break;
+			}
 			case sf::Keyboard::Insert: { if (!m_hasMenu) { initializeAddMenu(); } break; }
 			case sf::Keyboard::M: { if (!m_hasMenu) { initializeChangeAnimationMenu(); } break; }
 			case sf::Keyboard::Down: { if (m_menuIndex < m_menuAnimations.size() - 1) { m_menuIndex++; } break; }
@@ -956,7 +1088,7 @@ void GameState_Play::sUserInput()
 					}
 				}
 				break;
-				}
+			}
 			}
 		}
 
@@ -1014,15 +1146,18 @@ void GameState_Play::sAnimation()
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, 1))
 	{
 		playerAnimation += "Down";
+		//m_playerBlackBox->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation("BBoxV");
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, -1))
 	{
 		playerAnimation += "Up";
+		//m_playerBlackBox->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation("BBoxV");
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(1, 0))
 	{
 		playerAnimation += "Right";
 		m_player->getComponent<CTransform>().scale.x = 1;
+		//m_playerBlackBox->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation("BBoxH");
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(-1, 0))
 	{
@@ -1104,7 +1239,6 @@ void GameState_Play::sCamera()
 	if (m_follow)
 	{
 		// set the camera to follow the player
-
 		view.setCenter(p.x, p.y);
 		m_game.window().setView(view);
 	}
@@ -1155,7 +1289,18 @@ void GameState_Play::sRender()
 				}
 				else
 				{
-					m_game.window().draw(animation.getSprite());
+					if (e->getComponent<CTransform>().pos.dist(m_player->getComponent<CTransform>().pos) <= 250)
+					{
+
+						if (m_player->hasComponent<CGravity>())
+							m_game.window().draw(animation.getSprite(), &shader);
+						else
+							m_game.window().draw(animation.getSprite());
+					}
+					else if (e->getComponent<CAnimation>().animation.getName() == "GWell")
+					{
+						m_game.window().draw(animation.getSprite());
+					}
 				}
 			}
 		}
@@ -1232,7 +1377,7 @@ void GameState_Play::sRender()
 		rectColor.a = 128;
 		menuRect.setFillColor(rectColor);
 		m_game.window().draw(menuRect);
-		
+
 		for (int i = 0; i < m_menuAnimations.size(); i++)
 		{
 			m_menuAnimations[i].getSprite().setPosition(xMenuPos, int((halfMenuRect * 2) * i + halfMenuRect) + yAdjust);

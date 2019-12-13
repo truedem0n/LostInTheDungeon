@@ -1,4 +1,4 @@
-Texture   TexExplode    images/misc/explosion128.png
+Texture   TexExplode    images/liad/hero/explosion128.png
 Texture   TexRunDown    images/liad/hero/stand_down.png              
 Texture   TexRunRight   images/liad/hero/stand_right.png
 Texture   TexRunUp      images/liad/hero/walk_down.png
@@ -32,7 +32,7 @@ Texture   TexBush       images/tloz/green/tile_bush.png
 Texture   TexBlack      images/tloz/tile_black.png
 Texture   TexFloor      images/liad/tiles/floor.png
 Texture   TexSpikesD    images/liad/tiles/spikes_up.png
-Texture   TexWall       images/liad/tiles/wall.png
+Texture   BlackBoxV     images/liad/tiles/blackBox_up.png
 Texture   TexTektite    images/tloz/tektite.png
 Texture   TexKnight     images/tloz/knight.png
 Texture   TexEn1Die     images/liad/enemy_1/death.png
@@ -47,6 +47,10 @@ Texture   TexBossDie    images/liad/boss/boss_dead.png
 Texture   TexBossJump   images/liad/boss/boss_jump.png
 Texture   TexBossStandD images/liad/boss/stand_down.png
 Texture   TexBossStandR images/liad/boss/stand_right.png
+Texture   GravityWellS  images/liad/gravitywell.png
+Texture   WallT         images/liad/tiles/wall.png
+Texture   ExitStairs    images/liad/tiles/tile_stairs.png
+Animation ExitPoint     ExitStairs     1     0 stairs 1
 Animation Explosion     TexExplode     48    2 none 0 
 Animation RunDown       TexRunDown      1   15 Hero 0
 Animation RunRight      TexRunRight     1   15 Hero 0
@@ -55,7 +59,7 @@ Animation StandDown     TexStandD       1    0 Hero 0
 Animation StandRight    TexStandR       1    0 Hero 0
 Animation StandUp       TexStandU       1    0 Hero 0
 Animation Tektite       TexTektite      2   10 Tektite 1
-Animation Knight        TexKnight       2   10 Knight 1
+FAnimation Knight        TexKnight       2   10 Knight 1
 Animation En1Die        TexEn1Die       3   10 Enemy1 0
 Animation En1Jump       TexEn1Jump      3   10 Enemy1 0
 Animation En1Stand      TexEn1Stand     1   10 Enemy1 1
@@ -76,19 +80,23 @@ Animation RockTR        TexRockTR       1    0 Rock 0
 Animation RockBL        TexRockBL       1    0 Rock 0
 Animation RockBM        TexRockBM       1    0 Rock 1
 Animation RockBR        TexRockBR       1    0 Rock 0
-Animation WaterTL       TexWaterTL      1    0 Water 0
-Animation WaterTM       TexWaterTM      1    0 Water 0
-Animation WaterTR       TexWaterTR      1    0 Water 0
-Animation WaterML       TexWaterML      1    0 Water 0
-Animation WaterMM       TexWaterMM      1    0 Water 1
-Animation WaterMR       TexWaterMR      1    0 Water 0
-Animation WaterBL       TexWaterBL      1    0 Water 0
-Animation WaterBM       TexWaterBM      1    0 Water 0
-Animation WaterBR       TexWaterBR      1    0 Water 0
+Animation WallA         WallT           1    0 Wall 1 
+FAnimation WaterTL       TexWaterTL      1    0 Water 0
+FAnimation WaterTM       TexWaterTM      1    0 Water 0
+FAnimation WaterTR       TexWaterTR      1    0 Water 0
+FAnimation WaterML       TexWaterML      1    0 Water 0
+FAnimation WaterMM       TexWaterMM      1    0 Water 1
+FAnimation WaterMR       TexWaterMR      1    0 Water 0
+FAnimation WaterBL       TexWaterBL      1    0 Water 0
+FAnimation WaterBM       TexWaterBM      1    0 Water 0
+FAnimation WaterBR       TexWaterBR      1    0 Water 0
 Animation Bush          TexBush         1    0 Bush 1
 Animation Floor         TexFloor        1    0 Floor 1
 Animation SpikesD       TexSpikesD      1    0 Spikes 1
-Animation Wall          TexWall         1    0 Wall 1
-Font      Arial      fonts/arial.ttf
-Font      Mario      fonts/mario.ttf
-Font      Megaman    fonts/megaman.ttf
+Animation BBoxV         BlackBoxV       1    0 BBox 1
+Animation GWell         GravityWellS    4   5 Gravity 0
+Font      Arial         fonts/arial.ttf
+Font      Mario         fonts/mario.ttf
+Font      Megaman       fonts/megaman.ttf
+Font      PeicesNfi     fonts/piecesnfi.ttf
+Font      Splat         fonts/splat.ttf
