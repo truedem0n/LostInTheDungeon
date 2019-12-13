@@ -19,7 +19,7 @@ class GameState_Play : public GameState
 {
 
 protected:
-
+	sf::Music				m_music;
 	EntityManager           m_entityManager;
 	std::shared_ptr<Entity> m_player;
 	std::shared_ptr<Entity> m_playerBlackBox;
@@ -34,7 +34,7 @@ protected:
 	size_t					m_tileSize = 128;
 	bool                    m_drawTextures = true;
 	bool                    m_drawCollision = false;
-	bool                    m_follow = false;
+	bool                    m_follow = true;
 	bool					m_definitelySmellyZelda = false;
 	bool					m_snapToGrid = false;
 	bool					m_typing = false;

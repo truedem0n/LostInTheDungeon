@@ -91,7 +91,8 @@ Animation Floor         TexFloor        1    0 Floor 1
 Animation SpikesD       TexSpikesD      1    0 Spikes 1
 Animation BBoxH         BlackBoxH       1    0 BBox 1
 Animation BBoxV         BlackBoxV       1    0 BBox 1
-Font      Arial      fonts/arial.ttf
-Font      Mario      fonts/mario.ttf
-Font      Megaman    fonts/megaman.ttf
-Font      PeicesNfi    fonts/piecesnfi.ttf
+Font      Arial         fonts/arial.ttf
+Font      Mario         fonts/mario.ttf
+Font      Megaman       fonts/megaman.ttf
+Font      PeicesNfi     fonts/piecesnfi.ttf
+Font      Splat         fonts/splat.ttf

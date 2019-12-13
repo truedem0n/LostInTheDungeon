@@ -12,6 +12,7 @@
     <ClCompile Include="..\src\Vec2.cpp" />
     <ClCompile Include="..\src\Animation.cpp" />
     <ClCompile Include="..\src\GameState_Menu.cpp" />
+    <ClCompile Include="..\src\GameState_Over.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Assets.h" />
@@ -26,5 +27,6 @@
     <ClInclude Include="..\src\Vec2.h" />
     <ClInclude Include="..\src\Animation.h" />
     <ClInclude Include="..\src\GameState_Menu.h" />
+    <ClInclude Include="..\src\GameState_Over.h" />
   </ItemGroup>
 </Project>

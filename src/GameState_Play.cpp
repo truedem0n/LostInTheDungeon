@@ -15,6 +15,11 @@ GameState_Play::GameState_Play(GameEngine& game, const std::string& levelPath)
 
 void GameState_Play::init(const std::string& levelPath)
 {
+	if (!m_music.openFromFile("sounds/"+ levelPath+".wav"))
+		std::cout << "error loading music file"; // error
+	m_music.play();
+	m_music.setLoop(true);
+	m_music.setVolume(10);
 	loadLevel(levelPath);
 }
 
@@ -66,7 +71,7 @@ void GameState_Play::loadLevel(const std::string& filename)
 					getAnimation(m_token), true);
 				// room coordinates, tile coordinates, block movement, and vision.
 				infile >> RX >> RY >> TX >> TY >> BM >> BV;
-				m_playerBlackBox->addComponent<CBoundingBox>(Vec2(x, y), BM, BV);
+				m_playerBlackBox->addComponent<CBoundingBox>(m_game.getAssets().getAnimation("BBoxH").getSize(), BM, BV);
 				m_playerBlackBox->addComponent<CTransform>(Vec2(x * TX + RX * float(m_game.window().getSize().x) + x / 2, y * TY + RY * float(m_game.window().getSize().y) + y / 2));
 				m_playerBlackBox->getComponent<CTransform>().prevPos = m_playerBlackBox->getComponent<CTransform>().pos;
 				m_playerBlackBox->addComponent<CDrag>();
@@ -451,7 +456,7 @@ void GameState_Play::sMovement()
 	}
 
 	m_playerBlackBox->getComponent<CTransform>().pos = m_player->getComponent<CTransform>().pos;
-	m_playerBlackBox->getComponent<CTransform>().pos.y -= 68;
+	//m_playerBlackBox->getComponent<CTransform>().pos.y -= 68;
 }
 
 void GameState_Play::inializeNavMesh()
@@ -910,7 +915,14 @@ void GameState_Play::sUserInput()
 			case sf::Keyboard::F: { m_drawCollision = !m_drawCollision; break; }
 			case sf::Keyboard::Y: { m_follow = !m_follow; break; }
 			case sf::Keyboard::P: { setPaused(!m_paused); break; }
-
+			case sf::Keyboard::Q:
+			{
+				if (m_music.getStatus() == m_music.Stopped)
+					m_music.play();
+				else
+					m_music.stop();
+				break;
+			}
 			case sf::Keyboard::Insert: { if (!m_hasMenu) { initializeAddMenu(); } break; }
 			case sf::Keyboard::M: { if (!m_hasMenu) { initializeChangeAnimationMenu(); } break; }
 			case sf::Keyboard::Down: { if (m_menuIndex < m_menuAnimations.size() - 1) { m_menuIndex++; } break; }
@@ -1000,15 +1012,18 @@ void GameState_Play::sAnimation()
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, 1))
 	{
 		playerAnimation += "Down";
+		//m_playerBlackBox->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation("BBoxV");
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(0, -1))
 	{
 		playerAnimation += "Up";
+		//m_playerBlackBox->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation("BBoxV");
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(1, 0))
 	{
 		playerAnimation += "Right";
 		m_player->getComponent<CTransform>().scale.x = 1;
+		//m_playerBlackBox->getComponent<CAnimation>().animation = m_game.getAssets().getAnimation("BBoxH");
 	}
 	if (m_player->getComponent<CTransform>().facing == Vec2(-1, 0))
 	{
@@ -1081,7 +1096,6 @@ void GameState_Play::sCamera()
 	if (m_follow)
 	{
 		// set the camera to follow the player
-
 		view.setCenter(p.x, p.y);
 		m_game.window().setView(view);
 	}
