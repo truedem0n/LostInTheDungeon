@@ -1019,7 +1019,14 @@ void GameState_Play::sCollision()
 			if (currOverlap.x > 0 && currOverlap.y > 0)
 			{
 				auto exp = m_entityManager.addEntity("exp");
-				exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("En2Die"), false);
+				if (j->getComponent<CAnimation>().animation.getEntityName() == "Enemy1")
+				{
+					exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("En1Die"), false);
+				}
+				else
+				{
+					exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("En2Die"), false);
+				}
 				exp->addComponent<CTransform>();
 				exp->getComponent<CTransform>().pos = i->getComponent<CTransform>().pos;
 				i->destroy();
