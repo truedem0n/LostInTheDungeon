@@ -118,3 +118,11 @@ public:
 	bool drag = false;
 	CDrag() {}
 };
+
+class CInventory : public Component
+{
+public:
+	std::vector<Animation> items;
+	std::vector<int> counts;
+	CInventory() {}
+};

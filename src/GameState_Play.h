@@ -30,6 +30,7 @@ protected:
 	sf::Shader				shader, shader1, shader2;
 	PlayerConfig            m_playerConfig;
 	std::vector<Animation>	m_menuAnimations;
+	std::vector<sf::Text>	m_menuText;
 	size_t					m_menuIndex = 0;
 	size_t					m_tileSize = 128;
 	bool                    m_drawTextures = true;
@@ -40,6 +41,7 @@ protected:
 	bool					m_typing = false;
 	bool					m_hasMenu = false;
 	bool					m_addEntity = false;
+	bool					m_showInventory = false;
 	sf::Clock               m_clock;
 	int navmesh[12][10];
 	void init(const std::string& levelPath);
@@ -49,6 +51,7 @@ protected:
 
 	void initializeAddMenu();
 	void initializeChangeAnimationMenu();
+	void manageInventory();
 	void addEntity();
 	void changeAnimation();
 

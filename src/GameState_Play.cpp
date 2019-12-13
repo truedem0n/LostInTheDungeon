@@ -5,6 +5,7 @@
 #include "GameEngine.h"
 #include "Components.h"
 #include <math.h>
+#include <string>
 
 GameState_Play::GameState_Play(GameEngine& game, const std::string& levelPath)
 	: GameState(game)
@@ -317,6 +318,9 @@ void GameState_Play::spawnPlayer()
 	// Cbounding box constructor needs bound size, blocksmovement, blocksvision
 	m_player->addComponent<CBoundingBox>(m_game.getAssets().getAnimation("StandDown").getSize(), true, true);
 	m_player->addComponent<CInput>();
+	m_player->addComponent<CInventory>();
+	m_player->getComponent<CInventory>().items.push_back(m_game.getAssets().getAnimation("fire"));
+	m_player->getComponent<CInventory>().counts.push_back(5);
 
 	// New element to CTransform: 'facing', to keep track of where the player is facing
 	/*facing left = -1,0
@@ -1073,6 +1077,7 @@ void GameState_Play::sUserInput()
 			}
 			case sf::Keyboard::Insert: { if (!m_hasMenu) { initializeAddMenu(); } break; }
 			case sf::Keyboard::M: { if (!m_hasMenu) { initializeChangeAnimationMenu(); } break; }
+			case sf::Keyboard::I: { if (!m_hasMenu || m_showInventory) { manageInventory(); } break; }
 			case sf::Keyboard::Down: { if (m_menuIndex < m_menuAnimations.size() - 1) { m_menuIndex++; } break; }
 			case sf::Keyboard::Up: { if (m_menuIndex > 0) { m_menuIndex--; } break; }
 
@@ -1395,7 +1400,9 @@ void GameState_Play::sRender()
 		for (int i = 0; i < m_menuAnimations.size(); i++)
 		{
 			m_menuAnimations[i].getSprite().setPosition(xMenuPos, int((halfMenuRect * 2) * i + halfMenuRect) + yAdjust);
+			m_menuText[i].setPosition(xMenuPos + 20, int((halfMenuRect * 2)* i + halfMenuRect) + yAdjust + 20);
 			m_game.window().draw(m_menuAnimations[i].getSprite());
+			m_game.window().draw(m_menuText[i]);
 		}
 
 		sf::RectangleShape selectionRect;
@@ -1471,6 +1478,32 @@ void GameState_Play::initializeChangeAnimationMenu()
 	m_menuIndex = 0;
 	m_hasMenu = true;
 	m_addEntity = false;
+}
+
+void GameState_Play::manageInventory()
+{
+	if (m_showInventory)
+	{
+		m_menuAnimations.clear();
+		m_showInventory = false;
+		m_hasMenu = false;
+	}
+	else
+	{
+		for (int i = 0; i < m_player->getComponent<CInventory>().items.size(); i++)
+		{
+			m_menuAnimations.push_back(m_player->getComponent<CInventory>().items[i]);
+			sf::Text number;
+			number.setString(std::to_string(m_player->getComponent<CInventory>().counts[i]));
+			number.setFont(m_game.getAssets().getFont("Megaman"));
+			number.setCharacterSize(12);
+			number.setOrigin(number.getLocalBounds().width / 2, number.getLocalBounds().height / 2);
+			m_menuText.push_back(number);
+		}
+		m_menuIndex = -2;
+		m_showInventory = true;
+		m_hasMenu = true;
+	}
 }
 
 void GameState_Play::addEntity()
