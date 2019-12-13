@@ -26,7 +26,7 @@ protected:
 	std::shared_ptr<Entity> m_changeAnimation;
 	std::string             m_levelPath;
 	std::string             m_fileName = "";
-	std::string             m_activeWeapon = "arrow";
+	std::string             m_activeWeapon = "sword";
 	sf::Text				m_fileNameToDraw;
 	sf::Shader				shader, shader1, shader2;
 	PlayerConfig            m_playerConfig;
@@ -52,9 +52,10 @@ protected:
 
 	void initializeAddMenu();
 	void initializeChangeAnimationMenu();
-	void manageInventory();
+	void initializeInventory();
 	void addEntity();
 	void changeAnimation();
+	void changeWeapon();
 
     void update();
     void spawnPlayer();
