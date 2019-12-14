@@ -43,8 +43,8 @@ Texture   TexEn2Die     images/liad/enemy_2/death.png
 Texture   TexEn2Jump    images/liad/enemy_2/jump.png
 Texture   TexEn2Stand   images/liad/enemy_2/stand.png
 Texture   TexEn2Walk    images/liad/enemy_2/walking.png
-Texture   TexBossDie    images/liad/boss/boss_dead.png
-Texture   TexBossJump   images/liad/boss/boss_jump.png
+Texture   TexBossDie    images/liad/sprites/bossdeathspritesheet.png
+Texture   TexBossJump   images/liad/sprites/spritesheetbossjump.png
 Texture   TexBossStandD images/liad/boss/stand_down.png
 Texture   TexBossStandR images/liad/boss/stand_right.png
 Texture   GravityWellS  images/liad/gravitywell.png
@@ -53,6 +53,12 @@ Texture   ExitStairs    images/liad/tiles/tile_stairs.png
 Texture   TexFire       images/liad/sprites/fire.png
 Texture   TexArrowR       images/liad/sprites/arrowR.png
 Texture   TexArrowU       images/liad/sprites/arrowU.png
+Texture   TexBossWalk    images/liad/sprites/bosswalking.png
+Texture   TexMovingTile  images/liad/tiles/movingtile.png
+Animation BossWalk       TexBossWalk     3    10 boss 0
+Animation BossJump       TexBossJump     3    10 boss 0
+Animation BossDie        TexBossDie       3    10 boss 0
+Animation MTile           TexMovingTile  1    0   mtile 1  
 Animation ArrowR         TexArrowR       1     0 arrow 0
 Animation ArrowU         TexArrowU       1     0 arrow 0
 Animation ExitPoint     ExitStairs     1     0 stairs 1

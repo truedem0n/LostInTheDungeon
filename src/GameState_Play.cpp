@@ -43,8 +43,6 @@ void GameState_Play::loadLevel(const std::string& filename)
 		std::cout << "could not load shaderM.frag";
 	}
 
-
-
 	m_entityManager = EntityManager();
 
 	std::ifstream infile(filename);
@@ -1188,7 +1186,7 @@ void GameState_Play::sCollision()
 			m_game.popState();
 	}
 
-	if (playerFall)
+	if (playerFall && m_levelPath == "level1.txt")
 	{
 		m_player->destroy();
 		spawnPlayer();

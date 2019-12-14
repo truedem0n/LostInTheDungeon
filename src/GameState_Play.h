@@ -23,6 +23,8 @@ protected:
 	EntityManager           m_entityManager;
 	std::shared_ptr<Entity> m_player;
 	std::shared_ptr<Entity> m_playerBlackBox;
+	std::shared_ptr<Entity> m_tileToDestroyWhenInMovingTile;
+	bool					m_collidedWithMovingTile=false;
 	std::shared_ptr<Entity> m_changeAnimation;
 	std::string             m_levelPath;
 	std::string             m_fileName = "";
