@@ -13,8 +13,7 @@ GameState_Play::GameState_Play(GameEngine& game, const std::string& levelPath)
 {
 	init(m_levelPath);
 }
-
-void GameState_Play::init(const std::string& levelPath)
+ void GameState_Play::init(const std::string& levelPath)
 {
 	if (!m_music.openFromFile("sounds/" + levelPath + ".wav"))
 		std::cout << "error loading music file"; // error
@@ -79,15 +78,15 @@ void GameState_Play::loadLevel(const std::string& filename)
 			{
 				int  x = m_tileSize, y = m_tileSize, RX, RY, TX, TY;
 				bool BM, BV;
-				m_playerBlackBox = m_entityManager.addEntity("ArrowI");
+				std::shared_ptr<Entity> arrow = m_entityManager.addEntity("ArrowI");
 				infile >> m_token;
 				// animation
-				m_playerBlackBox->addComponent<CAnimation>(m_game.getAssets().
+				arrow->addComponent<CAnimation>(m_game.getAssets().
 					getAnimation(m_token), true);
 				// room coordinates, tile coordinates, block movement, and vision.
 				infile >> RX >> RY >> TX >> TY >> BM >> BV;
-				m_playerBlackBox->addComponent<CTransform>(Vec2(x * TX + RX * float(m_game.window().getSize().x) + x / 2, y * TY + RY * float(m_game.window().getSize().y) + y / 2));
-				m_playerBlackBox->getComponent<CTransform>().prevPos = m_playerBlackBox->getComponent<CTransform>().pos;
+				arrow->addComponent<CTransform>(Vec2(x * TX + RX * float(m_game.window().getSize().x) + x / 2, y * TY + RY * float(m_game.window().getSize().y) + y / 2));
+				arrow->getComponent<CTransform>().prevPos = arrow->getComponent<CTransform>().pos;
 			}
 
 			else if (m_token == "Tile")
