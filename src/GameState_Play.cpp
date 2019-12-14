@@ -5,6 +5,7 @@
 #include "GameEngine.h"
 #include "Components.h"
 #include <math.h>
+#include <string>
 
 GameState_Play::GameState_Play(GameEngine& game, const std::string& levelPath)
 	: GameState(game)
@@ -332,6 +333,9 @@ void GameState_Play::spawnPlayer()
 	// Cbounding box constructor needs bound size, blocksmovement, blocksvision
 	m_player->addComponent<CBoundingBox>(m_game.getAssets().getAnimation("StandDown").getSize(), true, true);
 	m_player->addComponent<CInput>();
+	m_player->addComponent<CInventory>();
+	m_player->getComponent<CInventory>().items.push_back(m_game.getAssets().getAnimation("SwordRight"));
+	m_player->getComponent<CInventory>().counts.push_back(-1);
 
 	// New element to CTransform: 'facing', to keep track of where the player is facing
 	/*facing left = -1,0
@@ -344,7 +348,12 @@ void GameState_Play::spawnPlayer()
 
 void GameState_Play::spawnArrow(std::shared_ptr<Entity> entity)
 {
-	std::cout << "workign";
+	if (m_player->getComponent<CInventory>().counts.size() < 2 || m_player->getComponent<CInventory>().counts[1] == 0)
+	{
+		m_player->getComponent<CInput>().canShoot = true;
+		return;
+	}
+
 	auto sword = m_entityManager.addEntity("arrow");
 	auto entityFace = entity->getComponent<CTransform>().facing;
 	sword->addComponent<CTransform>(entity->getComponent<CTransform>().pos + entityFace * 58);
@@ -364,6 +373,12 @@ void GameState_Play::spawnArrow(std::shared_ptr<Entity> entity)
 	}
 	sword->addComponent<CBoundingBox>(sword->getComponent<CAnimation>().animation.getSize(), false, false);
 	sword->addComponent<CLifeSpan>(150);
+
+	m_player->getComponent<CInventory>().counts[1]--;
+	if (m_showInventory)
+	{
+		m_menuText[1].setString(std::to_string(m_player->getComponent<CInventory>().counts[1]));
+	}
 }
 
 void GameState_Play::spawnSword(std::shared_ptr<Entity> entity)
@@ -492,13 +507,13 @@ void GameState_Play::sMovement()
 		{
 			if (m_activeWeapon == "sword")
 			{
-				spawnSword(m_player);
 				m_player->getComponent<CInput>().canShoot = false;
+				spawnSword(m_player);
 			}
 			else
 			{
-				spawnArrow(m_player);
 				m_player->getComponent<CInput>().canShoot = false;
+				spawnArrow(m_player);
 			}
 		}
 	}
@@ -1020,6 +1035,26 @@ void GameState_Play::sCollision()
 		auto overlap = Physics::GetOverlap(i, m_player);
 		if (overlap.x > 0 && overlap.y > 0)
 		{
+			m_player->getComponent<CInventory>().items.push_back(m_game.getAssets().getAnimation("ArrowR"));
+			m_player->getComponent<CInventory>().counts.push_back(5);
+
+			if (m_showInventory)
+			{
+				m_menuAnimations.push_back(m_player->getComponent<CInventory>().items[1]);
+				sf::Text number;
+				if (m_player->getComponent<CInventory>().counts[1] >= 0)
+				{
+					number.setString(std::to_string(m_player->getComponent<CInventory>().counts[1]));
+				}
+				else
+				{
+					number.setString("");
+				}
+				number.setFont(m_game.getAssets().getFont("Megaman"));
+				number.setCharacterSize(12);
+				number.setOrigin(number.getLocalBounds().width / 2, number.getLocalBounds().height / 2);
+				m_menuText.push_back(number);
+			}
 			i->destroy();
 		}
 	}
@@ -1169,6 +1204,7 @@ void GameState_Play::sUserInput()
 			}
 			case sf::Keyboard::Insert: { if (!m_hasMenu) { initializeAddMenu(); } break; }
 			case sf::Keyboard::M: { if (!m_hasMenu) { initializeChangeAnimationMenu(); } break; }
+			case sf::Keyboard::I: { if (!m_hasMenu) { initializeInventory(); } break; }
 			case sf::Keyboard::Down: { if (m_menuIndex < m_menuAnimations.size() - 1) { m_menuIndex++; } break; }
 			case sf::Keyboard::Up: { if (m_menuIndex > 0) { m_menuIndex--; } break; }
 
@@ -1191,6 +1227,10 @@ void GameState_Play::sUserInput()
 					if (m_addEntity)
 					{
 						addEntity();
+					}
+					else if (m_showInventory)
+					{
+						changeWeapon();
 					}
 					else
 					{
@@ -1492,7 +1532,9 @@ void GameState_Play::sRender()
 		for (int i = 0; i < m_menuAnimations.size(); i++)
 		{
 			m_menuAnimations[i].getSprite().setPosition(xMenuPos, int((halfMenuRect * 2) * i + halfMenuRect) + yAdjust);
+			m_menuText[i].setPosition(xMenuPos + 20, int((halfMenuRect * 2)* i + halfMenuRect) + yAdjust + 20);
 			m_game.window().draw(m_menuAnimations[i].getSprite());
+			m_game.window().draw(m_menuText[i]);
 		}
 
 		sf::RectangleShape selectionRect;
@@ -1570,6 +1612,40 @@ void GameState_Play::initializeChangeAnimationMenu()
 	m_addEntity = false;
 }
 
+void GameState_Play::initializeInventory()
+{
+	if (m_showInventory)
+	{
+		m_menuAnimations.clear();
+		m_menuText.clear();
+		m_showInventory = false;
+		m_hasMenu = false;
+	}
+	else
+	{
+		for (int i = 0; i < m_player->getComponent<CInventory>().items.size(); i++)
+		{
+			m_menuAnimations.push_back(m_player->getComponent<CInventory>().items[i]);
+			sf::Text number;
+			if (m_player->getComponent<CInventory>().counts[i] >= 0)
+			{
+				number.setString(std::to_string(m_player->getComponent<CInventory>().counts[i]));
+			}
+			else
+			{
+				number.setString("");
+			}
+			number.setFont(m_game.getAssets().getFont("Megaman"));
+			number.setCharacterSize(12);
+			number.setOrigin(number.getLocalBounds().width / 2, number.getLocalBounds().height / 2);
+			m_menuText.push_back(number);
+		}
+		m_menuIndex = 0;
+		m_showInventory = true;
+		m_hasMenu = true;
+	}
+}
+
 void GameState_Play::addEntity()
 {
 	//get the selected animation and clear the menu
@@ -1645,4 +1721,24 @@ void GameState_Play::changeAnimation()
 	m_changeAnimation.reset();
 
 	m_hasMenu = false;
+}
+
+void GameState_Play::changeWeapon()
+{
+	//get the selected animation and clear the menu
+	auto selectedAnimation = m_menuAnimations[m_menuIndex];
+	m_menuAnimations.clear();
+	m_menuText.clear();
+
+	if (selectedAnimation.getEntityName() == "arrow")
+	{
+		m_activeWeapon = "arrow";
+	}
+	else
+	{
+		m_activeWeapon = "sword";
+	}
+
+	m_hasMenu = false;
+	m_showInventory = false;
 }
