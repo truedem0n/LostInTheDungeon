@@ -1037,6 +1037,24 @@ void GameState_Play::sCollision()
 		{
 			m_player->getComponent<CInventory>().items.push_back(m_game.getAssets().getAnimation("ArrowR"));
 			m_player->getComponent<CInventory>().counts.push_back(5);
+
+			if (m_showInventory)
+			{
+				m_menuAnimations.push_back(m_player->getComponent<CInventory>().items[1]);
+				sf::Text number;
+				if (m_player->getComponent<CInventory>().counts[1] >= 0)
+				{
+					number.setString(std::to_string(m_player->getComponent<CInventory>().counts[1]));
+				}
+				else
+				{
+					number.setString("");
+				}
+				number.setFont(m_game.getAssets().getFont("Megaman"));
+				number.setCharacterSize(12);
+				number.setOrigin(number.getLocalBounds().width / 2, number.getLocalBounds().height / 2);
+				m_menuText.push_back(number);
+			}
 			i->destroy();
 		}
 	}
