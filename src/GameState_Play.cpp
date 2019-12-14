@@ -13,7 +13,7 @@ GameState_Play::GameState_Play(GameEngine& game, const std::string& levelPath)
 {
 	init(m_levelPath);
 }
- void GameState_Play::init(const std::string& levelPath)
+void GameState_Play::init(const std::string& levelPath)
 {
 	if (!m_music.openFromFile("sounds/" + levelPath + ".wav"))
 		std::cout << "error loading music file"; // error
@@ -1040,20 +1040,15 @@ void GameState_Play::sCollision()
 	for (auto i : m_entityManager.getEntities("MTile"))
 	{
 		auto overlap = Physics::GetOverlap(i, m_player);
-		if (overlap.x > 0 && overlap.y > 0 && m_player->getComponent<CTransform>().pos.dist(i->getComponent<CTransform>().pos) < 20)
+		if (overlap.x > 0 && overlap.y > 0 && m_player->getComponent<CTransform>().pos.dist(i->getComponent<CTransform>().pos) < 50)
 		{
-
-			if (!m_collidedWithMovingTile)
-			{
-				auto exp = m_entityManager.addEntity("exp");
-				exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("Explosion"), false);
-				exp->addComponent<CTransform>();
-				exp->getComponent<CTransform>().pos = m_tileToDestroyWhenInMovingTile->getComponent<CTransform>().pos;
-				m_collidedWithMovingTile = true;
-				i->addComponent<CPatrol>();
-			}
-			m_tileToDestroyWhenInMovingTile->destroy();
+			auto exp = m_entityManager.addEntity("exp");
+			i->getComponent<CTransform>().pos = Vec2(-256,-256);
 			m_player->getComponent<CTransform>().pos = i->getComponent<CTransform>().pos;
+			exp->addComponent<CAnimation>(m_game.getAssets().getAnimation("Explosion"), false);
+			exp->addComponent<CTransform>();
+			exp->getComponent<CTransform>().pos = i->getComponent<CTransform>().pos;
+			i->destroy();
 		}
 
 	}
