@@ -1532,9 +1532,12 @@ void GameState_Play::sRender()
 		for (int i = 0; i < m_menuAnimations.size(); i++)
 		{
 			m_menuAnimations[i].getSprite().setPosition(xMenuPos, int((halfMenuRect * 2) * i + halfMenuRect) + yAdjust);
-			m_menuText[i].setPosition(xMenuPos + 20, int((halfMenuRect * 2)* i + halfMenuRect) + yAdjust + 20);
 			m_game.window().draw(m_menuAnimations[i].getSprite());
-			m_game.window().draw(m_menuText[i]);
+			if (m_menuText.size() == m_menuAnimations.size())
+			{
+				m_menuText[i].setPosition(xMenuPos + 20, int((halfMenuRect * 2) * i + halfMenuRect) + yAdjust + 20);
+				m_game.window().draw(m_menuText[i]);
+			}
 		}
 
 		sf::RectangleShape selectionRect;
