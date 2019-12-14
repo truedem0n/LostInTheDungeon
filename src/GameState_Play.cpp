@@ -1440,7 +1440,7 @@ void GameState_Play::sRender()
 				else
 				{
 					//250
-					if (e->getComponent<CTransform>().pos.dist(m_player->getComponent<CTransform>().pos) <= 2050)
+					if (e->getComponent<CTransform>().pos.dist(m_player->getComponent<CTransform>().pos) <= 250)
 					{
 
 						if (m_player->hasComponent<CGravity>())
