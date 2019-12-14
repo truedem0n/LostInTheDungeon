@@ -17,10 +17,8 @@ Tile SpikesD 0 0 3 3 0 0
 Tile Floor 0 0 1 4 0 0
 Tile Floor 0 0 2 4 0 0
 Tile Floor 0 0 3 4 0 0
-Tile Floor 0 0 4 4 0 0
-Tile Floor 0 0 5 4 0 0
 Tile Floor 0 0 6 4 0 0
-ArrowI ArrowR 0 0 5 4 0 0
+ArrowI ArrowR 0 0 3 4 0 0
 Tile Floor 0 0 5 2 0 0
 Tile Floor 0 0 3 2 0 0
 Tile Floor 0 0 7 1 0 0
@@ -112,6 +110,7 @@ NPC En2Stand 0 -1 6 4 0 0 Patrol 1 6 6 4 3 4 3 1 5 1 5 2 6 2
 NPC En2Stand 0 -1 3 4 0 0 Patrol 1 6 6 4 3 4 3 1 5 1 5 2 6 2
 NPC En1Walk 0 0 5 2 0 0 Follow 2 1
 Player 832 576 48 48 5
-BBox BBoxV 0 0 0 0 0 0
 Tile GWell 0 0 0 0 1 1
 Tile ExitPoint    0 -1 4 0 0 0
+NPC Floor 0 0 4 4 0 0 Patrol 2 2 4 4 5 4
+BBox BBoxV 0 0 0 0 0 0
