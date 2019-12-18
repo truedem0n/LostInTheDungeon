@@ -80,6 +80,14 @@ public:
     CGravity(Vec2 g) : gravity(g) {}
 };
 
+class CHealth : public Component
+{
+public:
+	int health;
+	CHealth() {}
+	CHealth(int g) : health(g) {}
+};
+
 class CState : public Component
 {
 public:

@@ -23,7 +23,7 @@ protected:
 	EntityManager           m_entityManager;
 	std::shared_ptr<Entity> m_player;
 	std::shared_ptr<Entity> m_playerBlackBox;
-	std::shared_ptr<Entity> m_tileToDestroyWhenInMovingTile;
+	std::shared_ptr<Entity> m_boss;
 	bool					m_collidedWithMovingTile=false;
 	std::shared_ptr<Entity> m_changeAnimation;
 	std::string             m_levelPath;
@@ -32,6 +32,7 @@ protected:
 	sf::Text				m_fileNameToDraw;
 	sf::Shader				shader, shader1, shader2;
 	PlayerConfig            m_playerConfig;
+	sf::Text				m_healthText;
 	std::vector<Animation>	m_menuAnimations;
 	std::vector<sf::Text>	m_menuText;
 	size_t					m_menuIndex = 0;

@@ -16,6 +16,7 @@ typedef std::tuple<
     CFollowPlayer,
 	CPatrol,
 	CDrag,
+	CHealth,
 	CInventory
 > ComponentTuple;
 

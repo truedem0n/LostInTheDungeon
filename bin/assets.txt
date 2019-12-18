@@ -55,7 +55,7 @@ Texture   TexArrowR       images/liad/sprites/arrowR.png
 Texture   TexArrowU       images/liad/sprites/arrowU.png
 Texture   TexBossWalk    images/liad/sprites/bosswalking.png
 Texture   TexMovingTile  images/liad/tiles/movingtile.png
-Animation BossWalk       TexBossWalk     3    10 boss 0
+Animation BossWalk       TexBossWalk     3    10 boss 1
 Animation BossJump       TexBossJump     3    10 boss 0
 Animation BossDie        TexBossDie       3    10 boss 0
 Animation MTile           TexMovingTile  1    0   mtile 1  
@@ -106,7 +106,7 @@ Animation Floor         TexFloor        1    0 Floor 1
 Animation SpikesD       TexSpikesD      1    0 Spikes 1
 Animation BBoxV         BlackBoxV       1    0 BBox 0
 Animation GWell         GravityWellS    4   5 Gravity 1
-Animation fire          TexFire         4   2 Fire 1
+Animation fire          TexFire         4   2 Fire 0
 Font      Arial         fonts/arial.ttf
 Font      Mario         fonts/mario.ttf
 Font      Megaman       fonts/megaman.ttf
